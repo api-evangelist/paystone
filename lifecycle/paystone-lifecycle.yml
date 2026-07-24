@@ -1,0 +1,22 @@
+generated: '2026-07-24'
+method: searched
+source: https://api.paystone.com/docs
+note: >-
+  Versioning is derived from the OpenAPI path structure and the spec version
+  string; the status page was confirmed live. No public deprecation/sunset
+  policy or SLA document was found on the DataCandy developer surface.
+versioning:
+  scheme: uri-path
+  current: v1
+  observed: The client resource and its subresources are served under /v1/*; several top-level collections (contacts, merchants, transactions, rewards, items, webhooks) are unversioned.
+  spec_version: 26.7.1.0-d9107e6
+  docs: https://api.paystone.com/docs
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No published deprecation or Sunset (RFC 8594) policy was found.
+sla:
+  url: null
+  uptime_target: null
+status_page: https://status.paystone.com
+deprecated_operations: []

@@ -1,0 +1,80 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+spec_type: Webhooks
+note: >-
+  The DataCandy API does not publish an AsyncAPI document, but it exposes a
+  first-class Webhook Management surface: merchants register HTTPS callback
+  endpoints (with an optional secret token) scoped to one or more merchants and
+  a selected set of events. The event catalog below is derived verbatim from the
+  Event schema enum in the OpenAPI. Webhooks are managed through the REST
+  operations listed under management_operations.
+delivery:
+  transport: https-callback
+  registration: REST (Webhook Management)
+  callback_url_field: callbackUrl
+  signing:
+    field: secretToken
+    note: Optional per-webhook shared secret set at registration time.
+  scoping:
+    merchants: Webhooks can be scoped to specific merchants via the merchants array.
+    events: Each webhook subscribes to an explicit list of event types.
+management_operations:
+  - operationId: api_webhooks_get_collection
+    method: GET
+    path: /webhooks
+    summary: List registered webhooks.
+  - operationId: api_webhooks_post
+    method: POST
+    path: /webhooks
+    summary: Register a new webhook.
+  - operationId: api_webhooks_id_get
+    method: GET
+    path: /webhooks/{id}
+    summary: Retrieve a webhook by ID.
+  - operationId: api_webhooks_id_put
+    method: PUT
+    path: /webhooks/{id}
+    summary: Replace a webhook.
+  - operationId: api_webhooks_id_patch
+    method: PATCH
+    path: /webhooks/{id}
+    summary: Update a webhook.
+event_catalog:
+  contact:
+    description: Fired on contact lifecycle changes.
+    events:
+      - contact.created
+      - contact.modified
+      - contact.unsubscribed
+      - contact.anonymized
+  transaction_loyalty:
+    description: Fired on loyalty account transaction activity.
+    events:
+      - loyalty.accumulation
+      - loyalty.add
+      - loyalty.complete_cancel
+      - loyalty.item_cancel
+      - loyalty.partial_cancel
+      - loyalty.redeem
+      - loyalty.subtract
+      - loyalty.balance_import
+      - loyalty.reward_earned
+      - loyalty.reward_redeem
+      - loyalty.reward_expired
+  transaction_prepaid:
+    description: Fired on prepaid / gift account transaction activity.
+    events:
+      - prepaid.complete_cancel
+      - prepaid.partial_cancel
+      - prepaid.balance_import
+      - prepaid.subtract
+      - prepaid.card_empty
+      - prepaid.redeem
+      - prepaid.redeem_unlock
+      - prepaid.add
+      - prepaid.activation
+      - prepaid.increment
+      - prepaid.credit_note_activation
+      - prepaid.credit_note_increment
+event_count: 27

@@ -1,0 +1,52 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+format: rfc9457
+note: >-
+  Derived from the DataCandy OpenAPI 4xx responses. The API is built on API
+  Platform (Symfony); error responses are served as application/problem+json
+  (RFC 9457) via the Error schema (title, detail, status, instance, type) and,
+  for validation failures, the ConstraintViolation schema which adds a
+  violations[] array of field-level errors. The 401/403 responses use a simpler
+  {code, message} envelope.
+envelopes:
+  problem_details:
+    media_type: application/problem+json
+    schema: Error
+    fields: [type, title, status, detail, instance]
+  constraint_violation:
+    media_type: application/problem+json
+    schema: ConstraintViolation
+    fields: [type, title, status, detail, instance, violations]
+    violation_fields: [propertyPath, message, code, hint, payload]
+  auth_error:
+    media_type: application/json
+    fields: [code, message]
+problems:
+  - status: 400
+    title: Invalid input
+    format: rfc9457
+    detail: The request body could not be processed (malformed or invalid input).
+    applies_to: [api_v1clients_post, api_v1clients_id_patch, api_v1clients_idcomplete_post, api_v1clients_accessKeymerchants_post, api_v1clients_accessKeymerchants_id_patch, api_v1clients_accessKeymerchantsby-external-reference_externalReference_patch]
+  - status: 401
+    title: Unauthorized — missing or invalid JWT token.
+    format: auth_error
+    detail: JWT Token not found or invalid. Provide a valid bearer token.
+    envelope: auth_error
+    applies_to: all operations
+  - status: 403
+    title: Forbidden — token does not have the required role.
+    format: auth_error
+    detail: Access Denied. The token lacks the role required for this operation.
+    envelope: auth_error
+    applies_to: all operations
+  - status: 404
+    title: Not found — the requested resource does not exist.
+    format: rfc9457
+    detail: The requested resource could not be found.
+    applies_to: all item (by-id) operations
+  - status: 422
+    title: Validation error — see violations array for field-level details.
+    format: constraint_violation
+    detail: One or more fields failed validation; inspect violations[].
+    applies_to: [api_v1clients_post, api_v1clients_id_patch, api_v1clients_idcomplete_post, api_v1clients_accessKeymerchants_post, api_v1clients_accessKeymerchants_id_patch, api_v1clients_accessKeymerchantsby-external-reference_externalReference_patch]

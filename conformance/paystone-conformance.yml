@@ -1,0 +1,35 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+note: >-
+  Cross-cutting standards conformance derived from the DataCandy OpenAPI. Paystone
+  is a payment processor and is PCI DSS compliant as an organization, but no
+  published certification/compliance page was found on the DataCandy developer
+  surface, so no Compliance pointer is emitted (see review.yml).
+standards:
+  - id: openapi-3.1
+    conforms: true
+    evidence: openapi 3.1.0 document served at api.paystone.com/docs.jsonopenapi
+  - id: rfc9457-problem-details
+    conforms: true
+    evidence: 4xx responses use application/problem+json with type/title/status/detail/instance (Error schema)
+  - id: json-ld
+    conforms: true
+    evidence: responses served as application/ld+json
+  - id: hydra
+    conforms: true
+    evidence: collections are hydra:Collection with hydra:member/hydra:totalItems/hydra:view
+  - id: rfc7386-json-merge-patch
+    conforms: true
+    evidence: PATCH operations consume application/merge-patch+json
+  - id: jwt-bearer
+    conforms: true
+    evidence: securityScheme JWT is http bearer with bearerFormat JWT
+  - id: oauth2
+    conforms: false
+    evidence: no oauth2 securityScheme declared
+  - id: openid-connect
+    conforms: false
+  - id: pci-dss
+    conforms: unknown
+    evidence: Paystone is a payment processor (PCI DSS applies at the org level) but no certification artifact is published on the DataCandy developer surface

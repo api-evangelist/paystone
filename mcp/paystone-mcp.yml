@@ -1,0 +1,130 @@
+generated: '2026-07-24'
+method: derived
+status: candidate
+source: openapi/paystone-datacandy-openapi.yml
+note: No official Paystone/DataCandy MCP server is published. This is a candidate tool surface derived
+  one-to-one from the DataCandy OpenAPI operations; each tool inherits its backing operation parameters
+  and requestBody as its real inputSchema. Requires a JWT bearer token.
+server:
+  name: paystone-datacandy
+  transport: http
+  url: null
+auth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+tools:
+- name: api_v1clients_accessKeyportalsbalance_get_collection
+  description: Retrieve balance portal configurations for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyportalsbalance_get_collection
+- name: api_v1clients_get_collection
+  description: Retrieve all clients in the portfolio.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_get_collection
+- name: api_v1clients_post
+  description: Create a new client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_post
+- name: api_v1clients_id_get
+  description: Retrieve a client by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_id_get
+- name: api_v1clients_id_patch
+  description: Update an existing client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_id_patch
+- name: api_v1clients_idcomplete_post
+  description: Complete client onboarding.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_idcomplete_post
+- name: api_contacts_get_collection
+  description: Retrieve all contacts.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_contacts_get_collection
+- name: api_contacts_id_get
+  description: Retrieve a contact by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_contacts_id_get
+- name: api_v1clients_accessKeyaccount-typesgift_get_collection
+  description: Retrieve all gift account types for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typesgift_get_collection
+- name: api_v1clients_accessKeyaccount-typesgift_id_get
+  description: Retrieve a gift account type by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typesgift_id_get
+- name: api_items_id_get
+  description: Retrieve an item by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_items_id_get
+- name: api_v1clients_accessKeyaccount-typesloyalty_get_collection
+  description: Retrieve all loyalty account types for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typesloyalty_get_collection
+- name: api_v1clients_accessKeyaccount-typesloyalty_id_get
+  description: Retrieve a loyalty account type by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typesloyalty_id_get
+- name: api_loyalty-transactions_get_collection
+  description: Retrieve all loyalty transactions.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_loyalty-transactions_get_collection
+- name: api_loyalty-transactions_id_get
+  description: Retrieve a loyalty transaction by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_loyalty-transactions_id_get
+- name: api_v1clients_accessKeyportalsmember_get_collection
+  description: Retrieve member portal configurations for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyportalsmember_get_collection
+- name: api_merchants_get_collection
+  description: Retrieve all merchants.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_merchants_get_collection
+- name: api_merchants_id_get
+  description: Retrieve a merchant by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_merchants_id_get
+- name: api_v1clients_accessKeymerchants_get_collection
+  description: Retrieve all merchants for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchants_get_collection
+- name: api_v1clients_accessKeymerchants_post
+  description: Create a new merchant.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchants_post
+- name: api_v1clients_accessKeymerchantsby-external-reference_externalReference_get
+  description: Retrieve a merchant by external reference.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchantsby-external-reference_externalReference_get
+- name: api_v1clients_accessKeymerchantsby-external-reference_externalReference_patch
+  description: Update a merchant by external reference.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchantsby-external-reference_externalReference_patch
+- name: api_v1clients_accessKeymerchants_id_get
+  description: Retrieve a merchant by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchants_id_get
+- name: api_v1clients_accessKeymerchants_id_patch
+  description: Update an existing merchant.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeymerchants_id_patch
+- name: api_prepaid-transactions_get_collection
+  description: Retrieve all prepaid transactions.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_prepaid-transactions_get_collection
+- name: api_prepaid-transactions_id_get
+  description: Retrieve a prepaid transaction by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_prepaid-transactions_id_get
+- name: api_v1clients_accessKeyaccount-typespromo_get_collection
+  description: Retrieve all promo account types for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typespromo_get_collection
+- name: api_v1clients_accessKeyaccount-typespromo_id_get
+  description: Retrieve a promo account type by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyaccount-typespromo_id_get
+- name: api_rewards_id_get
+  description: Retrieve a reward by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_rewards_id_get
+- name: api_v1clients_accessKeyusers_get_collection
+  description: Retrieve all users for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyusers_get_collection
+- name: api_v1clients_accessKeyusers_post
+  description: Create a new user for a client.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyusers_post
+- name: api_v1clients_accessKeyusers_username_get
+  description: Retrieve a user by username.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyusers_username_get
+- name: api_v1clients_accessKeyusers_username_patch
+  description: Update an existing user.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_v1clients_accessKeyusers_username_patch
+- name: api_webhooks_get_collection
+  description: Retrieve all webhooks.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_get_collection
+- name: api_webhooks_post
+  description: Create a new webhook.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_post
+- name: api_webhooks_id_get
+  description: Retrieve a webhook by ID.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_id_get
+- name: api_webhooks_id_put
+  description: Replace an existing webhook.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_id_put
+- name: api_webhooks_id_patch
+  description: Update an existing webhook.
+  source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_id_patch

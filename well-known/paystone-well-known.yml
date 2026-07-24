@@ -1,0 +1,28 @@
+generated: '2026-07-24'
+method: searched
+host: https://api.paystone.com
+note: >-
+  All standard /.well-known/ discovery endpoints were probed on the API host
+  (api.paystone.com) and the website host (www.paystone.com). None are served —
+  this is a valid negative result. The machine-readable contract lives at the
+  OpenAPI export (api.paystone.com/docs.jsonopenapi), not under /.well-known/.
+documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+also_probed:
+  - host: https://www.paystone.com
+    security_txt: 404
+    llms_txt: 404
+openapi_export:
+  url: https://api.paystone.com/docs.jsonopenapi
+  status: 200

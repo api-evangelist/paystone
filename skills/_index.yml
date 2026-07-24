@@ -1,0 +1,16 @@
+generated: '2026-07-24'
+method: generated
+source: openapi/paystone-datacandy-openapi.yml
+skills:
+  - file: paystone-onboard-client-and-merchant.md
+    name: Onboard a DataCandy client and its first merchant
+    api: openapi/paystone-datacandy-openapi.yml
+    operations: [api_v1clients_post, api_v1clients_accessKeymerchants_post, api_v1clients_idcomplete_post]
+  - file: paystone-subscribe-to-webhooks.md
+    name: Subscribe to DataCandy webhooks
+    api: openapi/paystone-datacandy-openapi.yml
+    operations: [api_webhooks_post, api_webhooks_get_collection, api_webhooks_id_get, api_webhooks_id_patch]
+  - file: paystone-reconcile-loyalty-transactions.md
+    name: Reconcile loyalty and prepaid transactions
+    api: openapi/paystone-datacandy-openapi.yml
+    operations: [api_loyalty-transactions_get_collection, api_loyalty-transactions_id_get, api_prepaid-transactions_get_collection, api_prepaid-transactions_id_get]

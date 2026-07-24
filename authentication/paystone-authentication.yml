@@ -1,0 +1,14 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: JWT
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: Enter your JWT token (without the "Bearer" prefix).
+  sources:
+  - openapi/paystone-datacandy-openapi.yml

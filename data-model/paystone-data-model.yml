@@ -1,0 +1,89 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+note: Entity-relationship graph derived from the DataCandy OpenAPI path hierarchy (client-scoped subresources)
+  and schema id-reference fields. IDs are numeric except Client which is also addressable by a string
+  accessKey.
+identifiers:
+  Client: numeric id + string accessKey
+  Merchant: numeric id + externalReference
+  Contact: numeric id
+  LoyaltyTransaction: numeric id
+  PrepaidTransaction: numeric id
+  User: username
+entities:
+- Client
+- Merchant
+- Contact
+- GiftAccountType
+- LoyaltyAccountType
+- PromoAccountType
+- LoyaltyTransaction
+- PrepaidTransaction
+- Reward
+- Item
+- Webhook
+- MemberPortal
+- BalancePortal
+- User
+relationships:
+- from: Client
+  to: Merchant
+  type: has_many
+  via: merchants
+  evidence: /v1/clients/{accessKey}/merchants
+- from: Client
+  to: GiftAccountType
+  type: has_many
+  via: account-types/gift
+  evidence: /v1/clients/{accessKey}/account-types/gift
+- from: Client
+  to: LoyaltyAccountType
+  type: has_many
+  via: account-types/loyalty
+  evidence: /v1/clients/{accessKey}/account-types/loyalty
+- from: Client
+  to: PromoAccountType
+  type: has_many
+  via: account-types/promo
+  evidence: /v1/clients/{accessKey}/account-types/promo
+- from: Client
+  to: MemberPortal
+  type: has_many
+  via: portals/member
+  evidence: /v1/clients/{accessKey}/portals/member
+- from: Client
+  to: BalancePortal
+  type: has_many
+  via: portals/balance
+  evidence: /v1/clients/{accessKey}/portals/balance
+- from: Client
+  to: User
+  type: has_many
+  via: users
+  evidence: /v1/clients/{accessKey}/users
+- from: LoyaltyTransaction
+  to: Merchant
+  type: belongs_to
+  via: merchant
+  evidence: loyalty-transactions?merchant filter + schema merchant ref
+- from: PrepaidTransaction
+  to: Merchant
+  type: belongs_to
+  via: merchant
+  evidence: prepaid-transactions?merchant filter + schema merchant ref
+- from: Reward
+  to: LoyaltyTransaction
+  type: belongs_to
+  via: transaction
+  evidence: Reward.jsonld-transaction.read.item
+- from: Webhook
+  to: Merchant
+  type: has_many
+  via: merchants
+  evidence: Webhook.events/merchants scope
+- from: Webhook
+  to: Event
+  type: has_many
+  via: events
+  evidence: Webhook-webhook.write.item.events

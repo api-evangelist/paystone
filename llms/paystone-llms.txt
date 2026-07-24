@@ -1,0 +1,30 @@
+# Paystone — DataCandy API
+
+> Paystone is a Canadian payment processing and customer-engagement company headquartered in London, Ontario. Its public, self-serve, documented developer API is the DataCandy gift-card and loyalty platform: a REST API built on API Platform (Hydra / JSON-LD) served from api.paystone.com, covering clients, merchants, contacts, gift/loyalty/prepaid/promo account types, loyalty and prepaid transactions, rewards, items, member and balance portals, users, and webhooks. All endpoints require a JWT bearer token. Errors are RFC 9457 problem+json. Paystone's core card-acquiring/payment-gateway processing is a merchant product, not a public self-serve API.
+
+## API
+- [DataCandy API docs (Swagger UI)](https://api.paystone.com/docs): Interactive documentation for the DataCandy gift & loyalty REST API.
+- [OpenAPI 3.1 export](https://api.paystone.com/docs.jsonopenapi): Machine-readable OpenAPI for the DataCandy API (28 paths, 38 operations, 14 resource groups).
+
+## Specs & artifacts
+- [OpenAPI](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/openapi/paystone-datacandy-openapi.yml): DataCandy OpenAPI 3.1 (JWT bearer, Hydra/JSON-LD).
+- [Authentication](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/authentication/paystone-authentication.yml): JWT bearer auth profile.
+- [Conventions](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/conventions/paystone-conventions.yml): Pagination, content negotiation, merge-patch, error envelope.
+- [Error catalog](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/errors/paystone-problem-types.yml): RFC 9457 problem types + validation violations.
+- [Webhooks](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/asyncapi/paystone-datacandy-webhooks.yml): Contact and transaction (loyalty/prepaid) event catalog.
+- [Data model](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/data-model/paystone-data-model.yml): Client → merchants / account-types / portals / users entity graph.
+- [Agent skills](https://raw.githubusercontent.com/api-evangelist/paystone/refs/heads/main/skills/_index.yml): Packaged agent operating instructions for marquee flows.
+
+## Resource groups
+- Client Management, Merchant Management, Contact
+- Gift / Loyalty / Promo Account Types
+- Loyalty Transaction, Prepaid Transaction, Reward, Item
+- Member Portal, Balance Portal
+- User Management, Webhook Management
+
+## Docs & site
+- [Paystone](https://www.paystone.com/): Company website.
+- [Pricing](https://www.paystone.com/pricing): Product pricing.
+- [Help Center](https://help.paystone.com/): Support and knowledge base.
+- [Status](https://status.paystone.com): Platform status page.
+- [Sign up](https://start.paystone.com/sign-up): Merchant sign-up.

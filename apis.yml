@@ -68,6 +68,32 @@ apis:
   - type: APIReference
     url: https://api.paystone.com/docs
 common:
+- type: Authentication
+  url: authentication/paystone-authentication.yml
+- type: AgenticAccess
+  url: agentic-access/paystone-agentic-access.yml
+- type: DomainSecurity
+  url: security/paystone-domain-security.yml
+- type: Conventions
+  url: conventions/paystone-conventions.yml
+- type: ErrorCatalog
+  url: errors/paystone-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/paystone-lifecycle.yml
+- type: Conformance
+  url: conformance/paystone-conformance.yml
+- type: DataModel
+  url: data-model/paystone-data-model.yml
+- type: MCPServer
+  url: mcp/paystone-mcp.yml
+- type: Webhooks
+  url: asyncapi/paystone-datacandy-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/paystone-llms.txt
+- type: Overlay
+  url: overlays/paystone-datacandy-overlay.yaml
 - type: Website
   url: https://www.paystone.com/
 - type: DeveloperPortal

@@ -1,0 +1,67 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/paystone-datacandy-openapi.yml
+note: >-
+  Cross-cutting request/response semantics for the DataCandy API, derived from
+  the OpenAPI. The API is built on API Platform (Symfony) and speaks Hydra /
+  JSON-LD; it uses standard API Platform conventions for pagination, content
+  negotiation, patching, and error envelopes. No idempotency-key mechanism is
+  documented, so no Idempotency pointer is emitted.
+authentication:
+  style: http-bearer
+  token: JWT
+  header: 'Authorization: Bearer <jwt>'
+  detail: All endpoints require a JWT bearer token; 401 when missing/invalid, 403 when the token role is insufficient.
+content_negotiation:
+  read_media_types: [application/ld+json]
+  write_media_types: [application/ld+json]
+  patch_media_types: [application/merge-patch+json]
+  hypermedia: Hydra (JSON-LD) — collections are hydra:Collection with hydra:member and hydra:totalItems.
+pagination:
+  style: page-number
+  params:
+    page: The collection page number (default 1).
+    itemsPerPage: Items per page (default 30, max 30).
+  response_fields: [hydra:member, hydra:totalItems, hydra:view]
+  navigation: hydra:view provides hydra:first / hydra:last / hydra:next / hydra:previous IRIs.
+filtering:
+  note: Collection endpoints expose resource-specific query filters.
+  examples:
+    loyalty-transactions:
+      - merchant
+      - 'merchant[]'
+      - errorCode
+      - 'errorCode[]'
+      - commitStatus
+      - operation
+      - 'creationDate[before]'
+      - 'creationDate[after]'
+      - 'creationDate[strictly_before]'
+      - 'creationDate[strictly_after]'
+    merchants:
+      - type
+      - 'type[]'
+      - isActive
+    contacts:
+      - isActive
+idempotency:
+  supported: false
+  note: No Idempotency-Key header or idempotent-retry contract is documented.
+partial_update:
+  method: PATCH
+  media_type: application/merge-patch+json
+  note: Resources are updated via JSON Merge Patch (RFC 7386).
+lookup_by_alternate_key:
+  note: Merchants can be fetched and patched by externalReference in addition to numeric id.
+error_envelope:
+  format: rfc9457
+  media_type: application/problem+json
+  validation: ConstraintViolation with violations[] (propertyPath, message, code, hint)
+  ref: errors/paystone-problem-types.yml
+rate_limiting:
+  documented: false
+cross_links:
+  authentication: authentication/paystone-authentication.yml
+  errors: errors/paystone-problem-types.yml
+  lifecycle: lifecycle/paystone-lifecycle.yml
+  webhooks: asyncapi/paystone-datacandy-webhooks.yml

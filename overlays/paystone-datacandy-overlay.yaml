@@ -1,0 +1,19 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for DataCandy API
+  version: 1.0.0
+extends: openapi/paystone-datacandy-openapi.yml
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-provider: paystone
+      x-apievangelist-product: DataCandy (gift & loyalty)
+      x-apievangelist-source: https://api.paystone.com/docs.jsonopenapi
+      x-apievangelist-auth: JWT bearer (http)
+      x-apievangelist-hypermedia: Hydra / JSON-LD
+      x-apievangelist-errors: RFC 9457 (application/problem+json)
+      x-apievangelist-webhooks: asyncapi/paystone-datacandy-webhooks.yml
+  - target: $.servers
+    update:
+      - url: https://api.paystone.com
+        description: DataCandy production API (corrects the placeholder '/' server in the source spec)
