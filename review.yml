@@ -1,0 +1,144 @@
+aid: paystone
+name: Paystone
+review:
+  question: Does Paystone expose a public, self-serve, documented API with a downloadable OpenAPI?
+  answer: true
+  date: '2026-07-24'
+  reviewer: API Evangelist
+findings:
+  summary: |
+    Paystone (London, Ontario) markets itself as one of Canada's largest
+    bank-independent payment processors, selling card-present terminals,
+    online checkout, hosted payment pages, virtual terminals, invoicing, and
+    recurring billing to Canadian SMBs, plus loyalty, gift-card, and
+    reputation-marketing products. Its CORE card-acquiring / payment-gateway
+    processing is delivered as a merchant product and is NOT published as a
+    public, self-serve developer API — there is no public payments/acquiring
+    OpenAPI, no developer.paystone.com, docs.paystone.com, or
+    paystone.com/developers portal (all 404 or non-resolving).
+
+    Paystone's ONE genuinely public, documented, downloadable API surface is
+    the DataCandy platform API (Paystone owns DataCandy, a Canadian gift-card
+    and loyalty platform). It is a live API Platform (Symfony/Hydra JSON-LD)
+    REST API served from https://api.paystone.com, with an interactive
+    Swagger UI at https://api.paystone.com/docs (HTTP 200, titled
+    "DataCandy API - API Platform") and a machine-readable OpenAPI 3.1.0
+    export harvested verbatim to openapi/paystone-datacandy-openapi.yml.
+
+    The spec (version 26.7.1.0-d9107e6) documents 28 paths across 14 tagged
+    resource groups: Client Management, Merchant Management, Contact,
+    Gift/Loyalty/Promo Account Types, Loyalty Transaction, Prepaid
+    Transaction, Reward, Item, Member Portal, Balance Portal, User
+    Management, and Webhook Management. Webhooks are first-class (a
+    /webhooks resource plus a Webhook Management tag). No GraphQL, gRPC/.proto,
+    AsyncAPI, or public Postman collection was found on Paystone's own hosts.
+  homeMarket: Canada
+  tier: gateway-psp
+  marketSeamNote: |
+    Canada's payments market is small, concentrated, and mid-modernization:
+    Interac still owns consumer money movement while Payments Canada builds
+    the ISO 20022 Real-Time Rail (repeatedly slipped) and no open-banking
+    payment mandate is live. Paystone sits in the API-native SMB
+    money-movement / merchant-services layer (alongside Nuvei, Moneris,
+    Helcim, VoPay). It does not operate a scheme rail and publishes no
+    ISO 20022 or FAPI/mTLS surface; its public API is the DataCandy
+    gift/loyalty platform, JWT-secured, not a card-acquiring API.
+  developerPortal:
+    url: https://api.paystone.com/docs
+    httpStatus: 200
+    confirmed: true
+    note: Live API Platform Swagger UI titled "DataCandy API - API Platform".
+  downloadableSpecs:
+    count: 1
+    specs:
+      - file: openapi/paystone-datacandy-openapi.yml
+        title: DataCandy API
+        openapiVersion: 3.1.0
+        specVersion: 26.7.1.0-d9107e6
+        sourceURL: https://api.paystone.com/docs
+        fetchAccept: application/vnd.openapi+yaml
+        alternateJSONExport: https://api.paystone.com/docs.jsonopenapi
+        httpStatus: 200
+        fetchDate: '2026-07-24'
+        paths: 28
+        provenance: >-
+          Harvested verbatim from Paystone's live API Platform OpenAPI export
+          via content negotiation (Accept: application/vnd.openapi+yaml) on the
+          /docs endpoint of api.paystone.com. A JSON export is also available at
+          /docs.jsonopenapi. Not fabricated; parses as OpenAPI 3.1.0.
+  authModel:
+    scheme: JWT bearer
+    detail: >-
+      Single securityScheme "JWT" (type http, scheme bearer, bearerFormat JWT).
+      All endpoints require a JWT bearer token unless stated otherwise. No
+      OAuth2 authorization-server or OpenID Connect discovery documents are
+      served: /.well-known/openid-configuration and
+      /.well-known/oauth-authorization-server both return HTTP 404 on
+      api.paystone.com. No mTLS/FAPI surface (not a scheme rail).
+  webhooks:
+    present: true
+    note: >-
+      DataCandy API exposes a /webhooks resource and a "Webhook Management" tag.
+      No AsyncAPI document is published; webhook payload catalog is described
+      inline in the OpenAPI/Hydra model, not fabricated here.
+  postman:
+    present: false
+    note: No first-party public Postman collection/workspace found on Paystone hosts.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.paystone.com
+      documented: true
+      note: API Platform (Hydra/JSON-LD) REST API; OpenAPI 3.1 export available.
+    - protocol: GraphQL
+      documented: false
+      note: No public GraphQL endpoint found on Paystone hosts.
+    - protocol: gRPC
+      documented: false
+      note: No published .proto or gRPC surface found.
+  probes:
+    - url: https://api.paystone.com/
+      httpStatus: 200
+      note: Hydra JSON-LD entrypoint listing client, contact, loyaltyTransaction, merchant, prepaidTransaction, webhook.
+    - url: https://api.paystone.com/docs
+      httpStatus: 200
+      note: Swagger UI (HTML) / OpenAPI export (content-negotiated).
+    - url: https://developer.paystone.com/
+      httpStatus: 0
+      note: Does not resolve.
+    - url: https://docs.paystone.com/
+      httpStatus: 0
+      note: Does not resolve.
+    - url: https://www.paystone.com/developers
+      httpStatus: 404
+    - url: https://www.paystone.com/docs
+      httpStatus: 404
+    - url: https://www.paystone.com/
+      httpStatus: 200
+    - url: https://help.paystone.com/
+      httpStatus: 200
+    - url: https://status.paystone.com
+      httpStatus: 200
+      note: Redirects to status.datacandy.com.
+    - url: https://github.com/Paystone
+      httpStatus: 200
+      note: GitHub org exists (0 public repos at review date).
+sources:
+  - url: https://www.paystone.com/
+    type: Website
+    note: Company/product overview; Canada's largest bank-independent payment processor positioning.
+  - url: https://api.paystone.com/docs
+    type: APIReference
+    note: Live DataCandy API Swagger UI (API Platform) + OpenAPI 3.1 export.
+  - url: https://api.paystone.com/
+    type: APIEntrypoint
+    note: Hydra JSON-LD entrypoint enumerating resource collections.
+actions:
+  openapiHarvested: true
+  openapiPath: openapi/paystone-datacandy-openapi.yml
+  apisYmlUpdated: true
+  reason: >-
+    A real, live, downloadable OpenAPI 3.1 spec for the DataCandy platform API
+    was found and harvested verbatim. apis.yml lists one documented API
+    (Paystone DataCandy API) with OpenAPI, Documentation, and APIReference
+    pointers; the payment-gateway/acquiring gap is recorded honestly here.
