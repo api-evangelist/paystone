@@ -128,3 +128,9 @@ tools:
 - name: api_webhooks_id_patch
   description: Update an existing webhook.
   source_operation: openapi/paystone-datacandy-openapi.yml#api_webhooks_id_patch
+deployment:
+  mode: none
+  verified: derived
+  tools: 38
+  checked: '2026-08-12'
+  source: catalog MCP census
