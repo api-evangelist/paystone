@@ -27,6 +27,16 @@ tags:
 - Acquiring
 - Gift Cards
 - Loyalty
+- Subscription
+- Billing
+- Merchant Services
+tags_raw:
+- Payments
+- Canada
+- Payment Processing
+- Acquiring
+- Gift Cards
+- Loyalty
 - Subscriptions
 - Billing
 - Merchant Services
@@ -55,6 +65,12 @@ apis:
   humanURL: https://api.paystone.com/docs
   baseURL: https://api.paystone.com
   tags:
+  - Gift Cards
+  - Loyalty
+  - Prepaid
+  - Merchant Management
+  - Webhook
+  tags_raw:
   - Gift Cards
   - Loyalty
   - Prepaid
