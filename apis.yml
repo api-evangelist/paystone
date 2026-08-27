@@ -50,35 +50,198 @@ created: '2026-07-24'
 modified: '2026-07-24'
 specificationVersion: '0.23'
 apis:
-- aid: paystone:paystone-datacandy-api
-  name: Paystone DataCandy API
-  description: >-
-    The public, documented REST API for Paystone's DataCandy gift-card and
-    loyalty platform, built on API Platform (Hydra/JSON-LD) and served from
-    api.paystone.com. It exposes 28 documented paths across 14 resource groups
-    — client and merchant management, contacts, gift/loyalty/prepaid/promo
-    account types, loyalty and prepaid transactions, rewards and items, member
-    and balance portals, user management, and webhook management. All endpoints
-    require a JWT bearer token. An interactive Swagger UI is published at
-    api.paystone.com/docs and a machine-readable OpenAPI 3.1 export is
-    downloadable from the same host.
+- aid: paystone:paystone-balance-portal-api
+  name: Paystone Balance Portal API
+  description: The Balance Portal API from Paystone — 1 operation(s) for balance portal.
   humanURL: https://api.paystone.com/docs
   baseURL: https://api.paystone.com
   tags:
-  - Gift Cards
-  - Loyalty
-  - Prepaid
-  - Merchant Management
-  - Webhook
-  tags_raw:
-  - Gift Cards
-  - Loyalty
-  - Prepaid
-  - Merchant Management
-  - Webhooks
+  - Balance Portal
   properties:
   - type: OpenAPI
-    url: openapi/paystone-datacandy-openapi.yml
+    url: openapi/paystone-balance-portal-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-client-management-api
+  name: Paystone Client Management API
+  description: The Client Management API from Paystone — 3 operation(s) for client management.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Client Management
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-client-management-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-contact-api
+  name: Paystone Contact API
+  description: Resource 'Contact' operations.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Contact
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-contact-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-gift-account-type-api
+  name: Paystone Gift Account Type API
+  description: The Gift Account Type API from Paystone — 2 operation(s) for gift account type.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Gift Account Type
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-gift-account-type-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-item-api
+  name: Paystone Item API
+  description: Resource 'Item' operations.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Item
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-item-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-loyalty-account-type-api
+  name: Paystone Loyalty Account Type API
+  description: The Loyalty Account Type API from Paystone — 2 operation(s) for loyalty account type.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Loyalty Account Type
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-loyalty-account-type-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-loyalty-transaction-api
+  name: Paystone Loyalty Transaction API
+  description: The Loyalty Transaction API from Paystone — 2 operation(s) for loyalty transaction.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Loyalty Transaction
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-loyalty-transaction-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-member-portal-api
+  name: Paystone Member Portal API
+  description: The Member Portal API from Paystone — 1 operation(s) for member portal.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Member Portal
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-member-portal-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-merchant-management-api
+  name: Paystone Merchant Management API
+  description: The Merchant Management API from Paystone — 5 operation(s) for merchant management.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Merchant Management
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-merchant-management-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-prepaid-transaction-api
+  name: Paystone Prepaid Transaction API
+  description: The Prepaid Transaction API from Paystone — 2 operation(s) for prepaid transaction.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Prepaid Transaction
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-prepaid-transaction-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-promo-account-type-api
+  name: Paystone Promo Account Type API
+  description: The Promo Account Type API from Paystone — 2 operation(s) for promo account type.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Promo Account Type
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-promo-account-type-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-reward-api
+  name: Paystone Reward API
+  description: Resource 'Reward' operations.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Reward
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-reward-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-user-management-api
+  name: Paystone User Management API
+  description: The User Management API from Paystone — 2 operation(s) for user management.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - User Management
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-user-management-api-openapi.yml
+  - type: Documentation
+    url: https://api.paystone.com/docs
+  - type: APIReference
+    url: https://api.paystone.com/docs
+- aid: paystone:paystone-webhook-management-api
+  name: Paystone Webhook Management API
+  description: The Webhook Management API from Paystone — 2 operation(s) for webhook management.
+  humanURL: https://api.paystone.com/docs
+  baseURL: https://api.paystone.com
+  tags:
+  - Webhook Management
+  properties:
+  - type: OpenAPI
+    url: openapi/paystone-webhook-management-api-openapi.yml
   - type: Documentation
     url: https://api.paystone.com/docs
   - type: APIReference
