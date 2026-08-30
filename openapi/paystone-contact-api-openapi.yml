@@ -1,0 +1,463 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Contact API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Contact
+  description: Resource 'Contact' operations.
+paths:
+  /contacts:
+    get:
+      operationId: api_contacts_get_collection
+      tags:
+      - Contact
+      responses:
+        200:
+          description: List of contacts.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: Contact.jsonld-contact.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Contact.jsonld-contact.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all contacts.
+      description: Retrieves the collection of Contact resources.
+      parameters:
+      - name: page
+        in: query
+        description: The collection page number
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 1
+        style: form
+        explode: false
+      - name: itemsPerPage
+        in: query
+        description: The number of items per page
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 30
+          minimum: 0
+          maximum: 30
+        style: form
+        explode: false
+      - name: isActive
+        in: query
+        description: Contact isActive
+        required: false
+        deprecated: false
+        schema:
+          type: string
+        style: form
+        explode: false
+      security:
+      - JWT: {}
+  /contacts/{id}:
+    get:
+      operationId: api_contacts_id_get
+      tags:
+      - Contact
+      responses:
+        200:
+          description: Contact retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Contact.jsonld-contact.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a contact by ID.
+      description: Retrieves a Contact resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric contact ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 1
+      security:
+      - JWT: {}
+components:
+  schemas:
+    Contact.jsonld-contact.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          externalReference:
+            readOnly: true
+            type: string
+          firstName:
+            readOnly: true
+            type: string
+          lastName:
+            readOnly: true
+            type: string
+          isActive:
+            readOnly: true
+            type: boolean
+          isComplete:
+            readOnly: true
+            type: boolean
+          language:
+            readOnly: true
+            type: string
+          gender:
+            readOnly: true
+            type: string
+          birthdate:
+            readOnly: true
+            type: string
+            format: date-time
+          email:
+            readOnly: true
+            type: string
+          phoneNumber:
+            readOnly: true
+            type: string
+          phoneType:
+            readOnly: true
+            type: string
+            enum:
+            - FIXED_LINE
+            - MOBILE
+            - FIXED_LINE_OR_MOBILE
+            - UNKNOWN
+          phoneNumberVerified:
+            readOnly: true
+            type: boolean
+          address:
+            $ref: '#/components/schemas/Client.Address.jsonld-contact.read'
+          communicationPreference:
+            $ref: '#/components/schemas/CommunicationPreference.jsonld-contact.read'
+          termsAndConditionsAcceptanceDate:
+            readOnly: true
+            type: string
+            format: date-time
+          creationDate:
+            readOnly: true
+            type: string
+            format: date-time
+          modificationDate:
+            readOnly: true
+            type: string
+            format: date-time
+          completionDate:
+            readOnly: true
+            type: string
+            format: date-time
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    Client.Address.jsonld-contact.read:
+      type: object
+      properties:
+        addressLine1:
+          readOnly: true
+          type: string
+        addressLine2:
+          readOnly: true
+          type: string
+        city:
+          readOnly: true
+          type: string
+        postalCode:
+          readOnly: true
+          type: string
+        regionCode:
+          readOnly: true
+          type: string
+        countryCode:
+          readOnly: true
+          type: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    CommunicationPreference.jsonld-contact.read:
+      type: object
+      properties:
+        communicationEmail:
+          readOnly: true
+          default: false
+          type: boolean
+        communicationSms:
+          readOnly: true
+          default: false
+          type: boolean
+        consent:
+          readOnly: true
+          default: refused
+          type: string
+          enum:
+          - implied
+          - express
+          - refused
+        consentDate:
+          readOnly: true
+          type: string
+          format: date-time
+        emailAllowed:
+          readOnly: true
+          type: boolean
+        smsAllowed:
+          readOnly: true
+          type: boolean
+        communicationAllowed:
+          readOnly: true
+          type: boolean
+        consentValidUntil:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+          format: date-time
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

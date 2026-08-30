@@ -1,0 +1,1622 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Merchant Management API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Merchant Management
+paths:
+  /merchants:
+    get:
+      operationId: api_merchants_get_collection
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: List of merchants.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: Merchant.jsonld-merchant.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all merchants.
+      description: Retrieves the collection of Merchant resources.
+      parameters:
+      - name: page
+        in: query
+        description: The collection page number
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 1
+        style: form
+        explode: false
+      - name: itemsPerPage
+        in: query
+        description: The number of items per page
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 30
+          minimum: 0
+          maximum: 30
+        style: form
+        explode: false
+      - name: type
+        in: query
+        description: ''
+        required: false
+        deprecated: false
+        schema:
+          type: string
+        style: form
+        explode: false
+      - name: type[]
+        in: query
+        description: ''
+        required: false
+        deprecated: false
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: true
+      - name: isActive
+        in: query
+        description: Merchant isActive
+        required: false
+        deprecated: false
+        schema:
+          type: string
+        style: form
+        explode: false
+      security:
+      - JWT: {}
+  /merchants/{id}:
+    get:
+      operationId: api_merchants_id_get
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: Merchant retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.read_merchant.read.item'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a merchant by ID.
+      description: Retrieves a Merchant resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric merchant ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      security:
+      - JWT: {}
+  /v1/clients/{accessKey}/merchants:
+    get:
+      operationId: api_v1clients_accessKeymerchants_get_collection
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: List of merchants.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: Merchant.jsonld-merchant.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all merchants for a client.
+      description: Retrieves the collection of Merchant resources.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      security:
+      - JWT: {}
+    post:
+      operationId: api_v1clients_accessKeymerchants_post
+      tags:
+      - Merchant Management
+      responses:
+        201:
+          description: Merchant created successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.write'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Create a new merchant.
+      description: Creates a Merchant resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      requestBody:
+        description: The new Merchant resource
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Merchant-merchant.write'
+        required: true
+      security:
+      - JWT: {}
+  /v1/clients/{accessKey}/merchants/by-external-reference/{externalReference}:
+    get:
+      operationId: api_v1clients_accessKeymerchantsby-external-reference_externalReference_get
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: Merchant retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a merchant by external reference.
+      description: Retrieves a Merchant resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: externalReference
+        in: path
+        description: Merchant external reference ID.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: EXT-001
+      security:
+      - JWT: {}
+    patch:
+      operationId: api_v1clients_accessKeymerchantsby-external-reference_externalReference_patch
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: Merchant updated successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Update a merchant by external reference.
+      description: Updates the Merchant resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: externalReference
+        in: path
+        description: Merchant external reference ID.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: EXT-001
+      requestBody:
+        description: The updated Merchant resource
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Merchant-merchant.patch.jsonMergePatch'
+        required: true
+      security:
+      - JWT: {}
+  /v1/clients/{accessKey}/merchants/{id}:
+    get:
+      operationId: api_v1clients_accessKeymerchants_id_get
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: Merchant retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a merchant by ID.
+      description: Retrieves a Merchant resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: id
+        in: path
+        description: Numeric merchant ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      security:
+      - JWT: {}
+    patch:
+      operationId: api_v1clients_accessKeymerchants_id_patch
+      tags:
+      - Merchant Management
+      responses:
+        200:
+          description: Merchant updated successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Merchant.jsonld-merchant.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Update an existing merchant.
+      description: Updates the Merchant resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: id
+        in: path
+        description: Numeric merchant ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      requestBody:
+        description: The updated Merchant resource
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Merchant-merchant.patch.jsonMergePatch'
+        required: true
+      security:
+      - JWT: {}
+components:
+  schemas:
+    Merchant.jsonld-merchant.read_merchant.read.item:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          name:
+            description: Name of the merchant
+            type:
+            - string
+            - 'null'
+          storeNumber:
+            description: Unique store number within the client
+            type:
+            - string
+            - 'null'
+          type:
+            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+            type:
+            - string
+            - 'null'
+          isActive:
+            description: Merchant status (active, inactive)
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: Language code (en or fr)
+            type:
+            - string
+            - 'null'
+          timezone:
+            description: Timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address
+            type:
+            - string
+            - 'null'
+          phoneNumber:
+            description: Phone number
+            type:
+            - string
+            - 'null'
+          faxNumber:
+            description: Fax number
+            type:
+            - string
+            - 'null'
+          contactName:
+            description: Contact name
+            type:
+            - string
+            - 'null'
+          externalReference:
+            description: External reference ID
+            type:
+            - string
+            - 'null'
+          address:
+            anyOf:
+            - $ref: '#/components/schemas/Address.jsonld-merchant.read_merchant.read.item'
+            - type: 'null'
+          parent:
+            description: Parent merchant ID
+            type:
+            - integer
+            - 'null'
+          latitude:
+            description: Latitude coordinate (-90 to 90)
+            type:
+            - number
+            - 'null'
+          longitude:
+            description: Longitude coordinate (-180 to 180)
+            type:
+            - number
+            - 'null'
+          creationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          coordinates:
+            anyOf:
+            - $ref: '#/components/schemas/Point.jsonld-merchant.read_merchant.read.item'
+            - type: 'null'
+            readOnly: true
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    ConstraintViolation.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          status:
+            default: 422
+            type: integer
+          violations:
+            type: array
+            items:
+              type: object
+              properties:
+                propertyPath:
+                  type: string
+                  description: The property path of the violation
+                message:
+                  type: string
+                  description: The message associated with the violation
+                code:
+                  type: string
+                  description: The code of the violation
+                hint:
+                  type: string
+                  description: An extra hint to understand the violation
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: The serialized payload of the violation
+              required:
+              - propertyPath
+              - message
+          detail:
+            readOnly: true
+            type: string
+          description:
+            readOnly: true
+            type: string
+          type:
+            readOnly: true
+            type: string
+          title:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          instance:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: Unprocessable entity
+    Merchant.jsonld-merchant.write:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        required:
+        - name
+        - storeNumber
+        - type
+        - language
+        - timezone
+        - password
+        properties:
+          name:
+            maxLength: 128
+            description: Name of the merchant
+            type:
+            - string
+            - 'null'
+          storeNumber:
+            maxLength: 20
+            description: Unique store number within the client
+            type:
+            - string
+            - 'null'
+          type:
+            enum:
+            - point_of_sale
+            - head_office
+            - e-commerce
+            - web_pos
+            - third_party
+            - other
+            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+            type:
+            - string
+            - 'null'
+          language:
+            enum:
+            - en
+            - fr
+            description: Language code (en or fr)
+            type:
+            - string
+            - 'null'
+          timezone:
+            maxLength: 30
+            description: Timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          password:
+            pattern: ^([1-9]{8})$
+            writeOnly: true
+            description: Merchant password (8 digits, 1-9 only)
+            type:
+            - string
+            - 'null'
+          email:
+            format: email
+            maxLength: 45
+            description: Email address
+            externalDocs:
+              url: https://schema.org/email
+            type:
+            - string
+            - 'null'
+          phoneNumber:
+            maxLength: 40
+            description: Phone number
+            type:
+            - string
+            - 'null'
+          faxNumber:
+            maxLength: 30
+            description: Fax number
+            type:
+            - string
+            - 'null'
+          contactName:
+            maxLength: 255
+            description: Contact name
+            type:
+            - string
+            - 'null'
+          externalReference:
+            maxLength: 20
+            description: External reference ID
+            type:
+            - string
+            - 'null'
+          address:
+            anyOf:
+            - $ref: '#/components/schemas/Address.jsonld-merchant.write'
+            - type: 'null'
+          parent:
+            description: Parent merchant ID
+            type:
+            - integer
+            - 'null'
+          latitude:
+            minimum: -90
+            maximum: 90
+            description: Latitude coordinate (-90 to 90)
+            type:
+            - number
+            - 'null'
+          longitude:
+            minimum: -180
+            maximum: 180
+            description: Longitude coordinate (-180 to 180)
+            type:
+            - number
+            - 'null'
+          terminalInitializationCode:
+            readOnly: true
+            description: Terminal initialization code
+            type:
+            - string
+            - 'null'
+    Merchant.jsonld-merchant.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          name:
+            description: Name of the merchant
+            type:
+            - string
+            - 'null'
+          storeNumber:
+            description: Unique store number within the client
+            type:
+            - string
+            - 'null'
+          type:
+            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+            type:
+            - string
+            - 'null'
+          isActive:
+            description: Merchant status (active, inactive)
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: Language code (en or fr)
+            type:
+            - string
+            - 'null'
+          timezone:
+            description: Timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address
+            type:
+            - string
+            - 'null'
+          phoneNumber:
+            description: Phone number
+            type:
+            - string
+            - 'null'
+          faxNumber:
+            description: Fax number
+            type:
+            - string
+            - 'null'
+          contactName:
+            description: Contact name
+            type:
+            - string
+            - 'null'
+          externalReference:
+            description: External reference ID
+            type:
+            - string
+            - 'null'
+          address:
+            anyOf:
+            - $ref: '#/components/schemas/Address.jsonld-merchant.read'
+            - type: 'null'
+          parent:
+            description: Parent merchant ID
+            type:
+            - integer
+            - 'null'
+          latitude:
+            description: Latitude coordinate (-90 to 90)
+            type:
+            - number
+            - 'null'
+          longitude:
+            description: Longitude coordinate (-180 to 180)
+            type:
+            - number
+            - 'null'
+          creationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+    Address.jsonld-merchant.read:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Address.jsonld-merchant.write:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Address-merchant.write:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Address-merchant.patch:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Address.jsonld-merchant.read_merchant.read.item:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Merchant-merchant.patch.jsonMergePatch:
+      type: object
+      properties:
+        name:
+          maxLength: 128
+          description: Name of the merchant
+          type:
+          - string
+          - 'null'
+        storeNumber:
+          maxLength: 20
+          description: Unique store number within the client
+          type:
+          - string
+          - 'null'
+        isActive:
+          description: Merchant status (active, inactive)
+          type:
+          - boolean
+          - 'null'
+        timezone:
+          maxLength: 30
+          description: Timezone (e.g., America/Toronto)
+          type:
+          - string
+          - 'null'
+        password:
+          pattern: ^([1-9]{8})$
+          writeOnly: true
+          description: Merchant password (8 digits, 1-9 only)
+          type:
+          - string
+          - 'null'
+        email:
+          format: email
+          maxLength: 45
+          description: Email address
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        phoneNumber:
+          maxLength: 40
+          description: Phone number
+          type:
+          - string
+          - 'null'
+        address:
+          anyOf:
+          - $ref: '#/components/schemas/Address-merchant.patch'
+          - type: 'null'
+        latitude:
+          minimum: -90
+          maximum: 90
+          description: Latitude coordinate (-90 to 90)
+          type:
+          - number
+          - 'null'
+        longitude:
+          minimum: -180
+          maximum: 180
+          description: Longitude coordinate (-180 to 180)
+          type:
+          - number
+          - 'null'
+    Merchant-merchant.write:
+      type: object
+      required:
+      - name
+      - storeNumber
+      - type
+      - language
+      - timezone
+      - password
+      properties:
+        name:
+          maxLength: 128
+          description: Name of the merchant
+          type:
+          - string
+          - 'null'
+        storeNumber:
+          maxLength: 20
+          description: Unique store number within the client
+          type:
+          - string
+          - 'null'
+        type:
+          enum:
+          - point_of_sale
+          - head_office
+          - e-commerce
+          - web_pos
+          - third_party
+          - other
+          description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+          type:
+          - string
+          - 'null'
+        language:
+          enum:
+          - en
+          - fr
+          description: Language code (en or fr)
+          type:
+          - string
+          - 'null'
+        timezone:
+          maxLength: 30
+          description: Timezone (e.g., America/Toronto)
+          type:
+          - string
+          - 'null'
+        password:
+          pattern: ^([1-9]{8})$
+          writeOnly: true
+          description: Merchant password (8 digits, 1-9 only)
+          type:
+          - string
+          - 'null'
+        email:
+          format: email
+          maxLength: 45
+          description: Email address
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        phoneNumber:
+          maxLength: 40
+          description: Phone number
+          type:
+          - string
+          - 'null'
+        faxNumber:
+          maxLength: 30
+          description: Fax number
+          type:
+          - string
+          - 'null'
+        contactName:
+          maxLength: 255
+          description: Contact name
+          type:
+          - string
+          - 'null'
+        externalReference:
+          maxLength: 20
+          description: External reference ID
+          type:
+          - string
+          - 'null'
+        address:
+          anyOf:
+          - $ref: '#/components/schemas/Address-merchant.write'
+          - type: 'null'
+        parent:
+          description: Parent merchant ID
+          type:
+          - integer
+          - 'null'
+        latitude:
+          minimum: -90
+          maximum: 90
+          description: Latitude coordinate (-90 to 90)
+          type:
+          - number
+          - 'null'
+        longitude:
+          minimum: -180
+          maximum: 180
+          description: Longitude coordinate (-180 to 180)
+          type:
+          - number
+          - 'null'
+        terminalInitializationCode:
+          readOnly: true
+          description: Terminal initialization code
+          type:
+          - string
+          - 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+    Point.jsonld-merchant.read_merchant.read.item:
+      type: object
+      properties:
+        longitude:
+          type: number
+        latitude:
+          type: number
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

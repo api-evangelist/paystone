@@ -1,0 +1,398 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Gift Account Type API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Gift Account Type
+paths:
+  /v1/clients/{accessKey}/account-types/gift:
+    get:
+      operationId: api_v1clients_accessKeyaccount-typesgift_get_collection
+      tags:
+      - Gift Account Type
+      responses:
+        200:
+          description: List of gift account types.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: GiftAccountType.jsonld-account-type.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/GiftAccountType.jsonld-account-type.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all gift account types for a client.
+      description: Retrieves the collection of GiftAccountType resources.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      security:
+      - JWT: {}
+  /v1/clients/{accessKey}/account-types/gift/{id}:
+    get:
+      operationId: api_v1clients_accessKeyaccount-typesgift_id_get
+      tags:
+      - Gift Account Type
+      responses:
+        200:
+          description: Gift account type retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/GiftAccountType.jsonld-account-type.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a gift account type by ID.
+      description: Retrieves a GiftAccountType resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: id
+        in: path
+        description: Numeric account type ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 1
+      security:
+      - JWT: {}
+components:
+  schemas:
+    GiftAccountType.jsonld-account-type.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          isRechargeable:
+            description: Whether the account is rechargeable
+            type: boolean
+          isTransferable:
+            description: Whether the account is transferable between cards
+            type: boolean
+          isRestrictedToWhereActivated:
+            description: Whether the account is restricted to the location where it was activated
+            type: boolean
+          minimumBalance:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          maximumBalance:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          minimumActivation:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          maximumActivation:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          minimumRedeem:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          minimumReload:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          maximumReload:
+            anyOf:
+            - $ref: '#/components/schemas/Money.jsonld-account-type.read'
+            - type: 'null'
+          id:
+            description: Account type ID
+            type: integer
+          name:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-account-type.read'
+            - type: 'null'
+          isActive:
+            description: Whether the account type is active
+            type: boolean
+          program:
+            description: Program type
+            type: string
+          category:
+            description: Account type category
+            type: string
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    Money.jsonld-account-type.read:
+      type: object
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    LocalizedString.jsonld-account-type.read:
+      type: object
+      properties:
+        en:
+          description: English value
+          type:
+          - string
+          - 'null'
+        fr:
+          description: French value
+          type:
+          - string
+          - 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

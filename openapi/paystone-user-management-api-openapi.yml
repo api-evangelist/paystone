@@ -1,0 +1,815 @@
+openapi: 3.2.0
+info:
+  title: DataCandy User Management API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: User Management
+paths:
+  /v1/clients/{accessKey}/users:
+    get:
+      operationId: api_v1clients_accessKeyusers_get_collection
+      tags:
+      - User Management
+      responses:
+        200:
+          description: List of users.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: User.jsonld-user.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/User.jsonld-user.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all users for a client.
+      description: Retrieves the collection of User resources.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      security:
+      - JWT: {}
+    post:
+      operationId: api_v1clients_accessKeyusers_post
+      tags:
+      - User Management
+      responses:
+        201:
+          description: User created successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User.jsonld-user.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Create a new user for a client.
+      description: 'Creates a user account and associates it with the client.
+
+
+        **Password requirements:** minimum 10 characters; must include uppercase, lowercase, numeric, and special characters.
+
+
+        **Merchant restriction:** provide `accessGroupId` (group-based) or `merchantId` (single merchant) — not both.'
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      requestBody:
+        description: The new User resource
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/User-user.write'
+        required: true
+      security:
+      - JWT: {}
+  /v1/clients/{accessKey}/users/{username}:
+    get:
+      operationId: api_v1clients_accessKeyusers_username_get
+      tags:
+      - User Management
+      responses:
+        200:
+          description: User retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User.jsonld-user.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a user by username.
+      description: Retrieves a User resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: username
+        in: path
+        description: Unique username identifying the user within the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: john.doe
+      security:
+      - JWT: {}
+    patch:
+      operationId: api_v1clients_accessKeyusers_username_patch
+      tags:
+      - User Management
+      responses:
+        200:
+          description: User updated successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/User.jsonld-user.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Update an existing user.
+      description: Updates the User resource.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      - name: username
+        in: path
+        description: Unique username identifying the user within the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: john.doe
+      requestBody:
+        description: The updated User resource
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/User-user.patch.jsonMergePatch'
+        required: true
+      security:
+      - JWT: {}
+components:
+  schemas:
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    ConstraintViolation.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          status:
+            default: 422
+            type: integer
+          violations:
+            type: array
+            items:
+              type: object
+              properties:
+                propertyPath:
+                  type: string
+                  description: The property path of the violation
+                message:
+                  type: string
+                  description: The message associated with the violation
+                code:
+                  type: string
+                  description: The code of the violation
+                hint:
+                  type: string
+                  description: An extra hint to understand the violation
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: The serialized payload of the violation
+              required:
+              - propertyPath
+              - message
+          detail:
+            readOnly: true
+            type: string
+          description:
+            readOnly: true
+            type: string
+          type:
+            readOnly: true
+            type: string
+          title:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          instance:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: Unprocessable entity
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    User.jsonld-user.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          username:
+            description: Unique username for the user
+            type:
+            - string
+            - 'null'
+          name:
+            description: Full name of the user
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address of the user
+            type:
+            - string
+            - 'null'
+          roles:
+            description: Role codes assigned to this user
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          isActive:
+            description: Whether the user is active
+            type:
+            - boolean
+            - 'null'
+          enforceTwoFactorAuth:
+            description: Whether to enforce two-factor authentication
+            default: false
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: User language preference (en or fr)
+            type:
+            - string
+            - 'null'
+          creationDate:
+            description: Date and time the user was created
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            description: Date and time the user was last modified
+            type:
+            - string
+            - 'null'
+            format: date-time
+          userGroups:
+            description: User groups assigned to this user, with their IDs and names
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          twoFactorAuthEnabled:
+            description: Whether two-factor authentication is enabled for the user
+            default: false
+            type: boolean
+          merchantAccessLevel:
+            description: 'Merchant access: "all" grants access to all merchants, or an array of merchant IDs the user can access'
+            default: all
+            anyOf:
+            - type: array
+              items:
+                type:
+                - string
+                - 'null'
+            - type: string
+    User-user.patch.jsonMergePatch:
+      type: object
+      properties:
+        name:
+          maxLength: 128
+          description: Full name of the user
+          type:
+          - string
+          - 'null'
+        email:
+          format: email
+          maxLength: 128
+          description: Email address of the user
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        password:
+          description: 'Password (HIGH complexity required: min 10 chars, uppercase, lowercase, number, special character)'
+          type:
+          - string
+          - 'null'
+        userGroupIds:
+          description: IDs of the user groups to assign to this user
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        accessGroupId:
+          description: Restrict user access to a merchant access group by ID
+          type:
+          - integer
+          - 'null'
+        merchantId:
+          description: Restrict user access to a single merchant by ID
+          type:
+          - integer
+          - 'null'
+        isActive:
+          description: Whether the user is active
+          type:
+          - boolean
+          - 'null'
+        enforceTwoFactorAuth:
+          description: Whether to enforce two-factor authentication
+          default: false
+          type:
+          - boolean
+          - 'null'
+        language:
+          enum:
+          - en
+          - fr
+          description: User language preference (en or fr)
+          type:
+          - string
+          - 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    User-user.write:
+      type: object
+      required:
+      - username
+      - name
+      - password
+      - userGroupIds
+      - roles
+      properties:
+        username:
+          maxLength: 64
+          description: Unique username for the user
+          type:
+          - string
+          - 'null'
+        name:
+          maxLength: 128
+          description: Full name of the user
+          type:
+          - string
+          - 'null'
+        email:
+          format: email
+          maxLength: 128
+          description: Email address of the user
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        password:
+          description: 'Password (HIGH complexity required: min 10 chars, uppercase, lowercase, number, special character)'
+          type:
+          - string
+          - 'null'
+        userGroupIds:
+          description: IDs of the user groups to assign to this user
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        roles:
+          minItems: 1
+          description: Role codes assigned to this user
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        accessGroupId:
+          description: Restrict user access to a merchant access group by ID
+          type:
+          - integer
+          - 'null'
+        merchantId:
+          description: Restrict user access to a single merchant by ID
+          type:
+          - integer
+          - 'null'
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,250 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Reward API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Reward
+  description: Resource 'Reward' operations.
+paths:
+  /rewards/{id}:
+    get:
+      operationId: api_rewards_id_get
+      tags:
+      - Reward
+      responses:
+        200:
+          description: Reward retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Reward.jsonld-transaction.read.item'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a reward by ID.
+      description: Retrieves a Reward resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric reward ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 1
+      security:
+      - JWT: {}
+components:
+  schemas:
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Reward.jsonld-transaction.read.item:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          creationDate:
+            readOnly: true
+            type: string
+            format: date-time
+          expireOnDate:
+            readOnly: true
+            type: string
+            format: date-time
+          rewardValue:
+            readOnly: true
+            type:
+            - number
+            - 'null'
+          type:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          sku:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          quantity:
+            readOnly: true
+            type:
+            - integer
+            - 'null'
+          labelEn:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          labelFr:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          redeemableItems:
+            readOnly: true
+            type: array
+            items:
+              type: object
+              properties:
+                sku:
+                  type: string
+                labelEn:
+                  type: string
+                  nullable: true
+                labelFr:
+                  type: string
+                  nullable: true
+                creationDate:
+                  type: string
+                  nullable: true
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

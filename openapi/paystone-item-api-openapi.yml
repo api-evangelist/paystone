@@ -1,0 +1,1094 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Item API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Item
+  description: Resource 'Item' operations.
+paths:
+  /items/{id}:
+    get:
+      operationId: api_items_id_get
+      tags:
+      - Item
+      responses:
+        200:
+          description: Item retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Item.jsonld'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve an item by ID.
+      description: Retrieves a Item resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric item ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 1
+      security:
+      - JWT: {}
+components:
+  schemas:
+    GeomPoint.jsonld:
+      type: object
+      properties:
+        geom:
+          $ref: '#/components/schemas/DataType.Point.jsonld'
+        id:
+          readOnly: true
+          type:
+          - integer
+          - 'null'
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    AccessGroup.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        name:
+          type: string
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Banner.jsonld'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant.jsonld'
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - creationDate
+      - modificationDate
+    Banner.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        externalReference:
+          type:
+          - string
+          - 'null'
+        creationDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        primaryColor:
+          type:
+          - string
+          - 'null'
+        secondaryColor:
+          type:
+          - string
+          - 'null'
+        emailSenderName:
+          type:
+          - string
+          - 'null'
+        emailSenderAddress:
+          format: email
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        merchantsCount:
+          type:
+          - integer
+          - 'null'
+        modificationDate:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        accessGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessGroup.jsonld'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant.jsonld'
+        imageUrl:
+          type:
+          - string
+          - 'null'
+        translations:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BannerTranslation.jsonld'
+        newTranslations:
+          $ref: '#/components/schemas/Collection.jsonld'
+        currentLocale:
+          type: string
+        defaultLocale:
+          default: en
+          type: string
+        name:
+          readOnly: true
+        imageId:
+          readOnly: true
+          type:
+          - integer
+          - 'null'
+        translationEntityClass:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Money.jsonld:
+      type: object
+      properties:
+        amount:
+          anyOf:
+          - type: integer
+          - type: string
+        calculator:
+          readOnly: true
+          default: Money\Calculator\BcMathCalculator
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency.jsonld'
+        sameCurrency:
+          readOnly: true
+          type: boolean
+        zero:
+          readOnly: true
+          type: boolean
+        positive:
+          readOnly: true
+          type: boolean
+        negative:
+          readOnly: true
+          type: boolean
+    Card.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: string
+        status:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+        contact:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+          format: iri-reference
+          example: https://example.com/
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+    Item.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          id:
+            readOnly: true
+            type: integer
+          lineNumber:
+            readOnly: true
+            type: string
+          quantity:
+            readOnly: true
+            type: string
+          currentQuantity:
+            readOnly: true
+            type: string
+          amount:
+            $ref: '#/components/schemas/Money.jsonld'
+          points:
+            readOnly: true
+            type: string
+          ipc:
+            readOnly: true
+            type: string
+          upc:
+            readOnly: true
+            type: string
+          eligibleForAccumulation:
+            readOnly: true
+            type: boolean
+      properties:
+        transaction:
+          anyOf:
+          - $ref: '#/components/schemas/Transaction.jsonld'
+          - type: 'null'
+          readOnly: true
+    MerchantCategory.jsonld:
+      type: object
+      properties:
+        exclusive:
+          default: '1'
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        id:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Client.Merchant.jsonld:
+      type: object
+      properties:
+        parentMerchant:
+          anyOf:
+          - $ref: '#/components/schemas/Client.Merchant.jsonld'
+          - type: 'null'
+        name:
+          maxLength: 128
+          type:
+          - string
+          - 'null'
+        storeNumber:
+          maxLength: 20
+          type:
+          - string
+          - 'null'
+        lang:
+          type: string
+        active:
+          default: y
+          type: string
+        compensation:
+          default: y
+          type: string
+        chargeAdministrativeFees:
+          type: boolean
+        isSalesLocation:
+          type: boolean
+        institutionNumber:
+          maxLength: 10
+          type:
+          - string
+          - 'null'
+        companyName:
+          maxLength: 80
+          type:
+          - string
+          - 'null'
+        accountNumber:
+          maxLength: 15
+          type:
+          - string
+          - 'null'
+        transitNumber:
+          maxLength: 10
+          type:
+          - string
+          - 'null'
+        email:
+          maxLength: 45
+          format: email
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        address:
+          maxLength: 255
+          type:
+          - string
+          - 'null'
+        address2:
+          maxLength: 255
+          type:
+          - string
+          - 'null'
+        city:
+          maxLength: 255
+          type:
+          - string
+          - 'null'
+        phone:
+          maxLength: 40
+          type:
+          - string
+          - 'null'
+        fax:
+          maxLength: 30
+          type:
+          - string
+          - 'null'
+        postalCode:
+          maxLength: 255
+          type:
+          - string
+          - 'null'
+        countryId:
+          minLength: 2
+          maxLength: 2
+          type:
+          - string
+          - 'null'
+        regionId:
+          minLength: 2
+          maxLength: 2
+          type:
+          - string
+          - 'null'
+        trxDollarToPointNumerator:
+          minimum: 0
+          maximum: 100
+          default: 0
+          type: integer
+        trxDollarToPointDenominator:
+          minimum: 0
+          maximum: 100
+          default: 0
+          type: integer
+        trxPointToDollarNumerator:
+          minimum: 0
+          maximum: 100
+          default: 0
+          type: integer
+        trxPointToDollarDenominator:
+          minimum: 0
+          maximum: 100
+          default: 0
+          type: integer
+        timezone:
+          maxLength: 30
+          type: string
+        externalReferenceId:
+          maxLength: 20
+          type:
+          - string
+          - 'null'
+        useShift:
+          default: y
+          type: string
+        contactName:
+          maxLength: 255
+          type:
+          - string
+          - 'null'
+        lastTerminalInitDate:
+          externalDocs:
+            url: https://schema.org/DateTime
+          type:
+          - string
+          - 'null'
+          format: date-time
+        geomPoint:
+          anyOf:
+          - $ref: '#/components/schemas/GeomPoint.jsonld'
+          - type: 'null'
+        banner:
+          anyOf:
+          - $ref: '#/components/schemas/Banner.jsonld'
+          - type: 'null'
+        paymentTerminalAcquirerId:
+          type:
+          - integer
+          - 'null'
+        posManufacturerId:
+          type:
+          - integer
+          - 'null'
+        type:
+          type: string
+        merchantSubcategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerchantSubcategory.jsonld'
+        caaLocationCode:
+          anyOf:
+          - $ref: '#/components/schemas/CaaLocationcode.jsonld'
+          - type: 'null'
+        creationDate:
+          externalDocs:
+            url: https://schema.org/DateTime
+          type: string
+          format: date-time
+        modificationDate:
+          externalDocs:
+            url: https://schema.org/DateTime
+        accessGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessGroup.jsonld'
+        redacted:
+          default: false
+          type: boolean
+        id:
+          type: integer
+        hashedPassword: null
+        clearPassword:
+          writeOnly: true
+          type: string
+        systemLogableId:
+          readOnly: true
+          type: string
+        systemLogableType:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - storeNumber
+      - lang
+      - active
+      - compensation
+      - chargeAdministrativeFees
+      - isSalesLocation
+      - useShift
+      - creationDate
+      - modificationDate
+    Collection.jsonld:
+      type: object
+      properties:
+        empty:
+          readOnly: true
+        keys:
+          readOnly: true
+        values:
+          readOnly: true
+        iterator:
+          readOnly: true
+    BannerTranslation.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        name:
+          type: string
+        websiteUrl:
+          format: uri
+          externalDocs:
+            url: https://schema.org/url
+          type: string
+        customerServiceEmail:
+          format: email
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        customerServicePhoneNumber:
+          type:
+          - string
+          - 'null'
+        imageId:
+          type:
+          - integer
+          - 'null'
+        translatable:
+          anyOf:
+          - $ref: '#/components/schemas/Banner.jsonld'
+          - type: 'null'
+        locale:
+          maxLength: 2
+          type: string
+        translatableEntityClass:
+          readOnly: true
+        empty:
+          readOnly: true
+          type: boolean
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - locale
+    MerchantSubcategory.jsonld:
+      type: object
+      properties:
+        externalReference:
+          type:
+          - string
+          - 'null'
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        merchantCategory:
+          anyOf:
+          - $ref: '#/components/schemas/MerchantCategory.jsonld'
+          - type: 'null'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant.jsonld'
+        id:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Transaction.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        confirmationNumber:
+          readOnly: true
+          type: integer
+        operation:
+          readOnly: true
+          type: string
+          enum:
+          - add
+          - sub
+          - bal
+          - red
+          - cdi
+          - imp
+          - loc
+          - rul
+          - lom
+          - nfo
+          - cmt
+          - acc
+          - nai
+          - pra
+          - pex
+          - rdu
+          - ldu
+          - dul
+          - bdu
+          - act
+          - inc
+          - btr
+          - cna
+          - cni
+          - emp
+          - rgn
+          - rrd
+          - rex
+          - rad
+          - rrm
+          - rdi
+          - pad
+          - prm
+          - xpt
+          - xen
+          - ccl
+          - icl
+          - pcl
+          - cdu
+          - apf
+          - cpf
+          - gta
+          - mer
+          - pfi
+          - psa
+          - dde
+          - dse
+          - dsm
+        originalOperation:
+          readOnly: true
+          type: string
+          enum:
+          - add
+          - sub
+          - bal
+          - red
+          - cdi
+          - imp
+          - loc
+          - rul
+          - lom
+          - nfo
+          - cmt
+          - acc
+          - nai
+          - pra
+          - pex
+          - rdu
+          - ldu
+          - dul
+          - bdu
+          - act
+          - inc
+          - btr
+          - cna
+          - cni
+          - emp
+          - rgn
+          - rrd
+          - rex
+          - rad
+          - rrm
+          - rdi
+          - pad
+          - prm
+          - xpt
+          - xen
+          - ccl
+          - icl
+          - pcl
+          - cdu
+          - apf
+          - cpf
+          - gta
+          - mer
+          - pfi
+          - psa
+          - dde
+          - dse
+          - dsm
+        originalTransaction:
+          anyOf:
+          - $ref: '#/components/schemas/Transaction.jsonld'
+          - type: 'null'
+          readOnly: true
+        invoiceNumber:
+          readOnly: true
+          type: string
+        extendedInvoiceNumber:
+          readOnly: true
+          type: string
+        workstationNumber:
+          readOnly: true
+          type: string
+        waiterNumber:
+          readOnly: true
+          type: string
+        commitStatus:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - n
+        clearinghouseStatus:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - n
+        cancellationStatus:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - n
+          - m
+        batchStatus:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - n
+        errorCode:
+          readOnly: true
+          type: integer
+        card:
+          $ref: '#/components/schemas/Card.jsonld'
+        merchant:
+          $ref: '#/components/schemas/Client.Merchant.jsonld'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item.jsonld'
+          readOnly: true
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        contact:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+          format: iri-reference
+          example: https://example.com/
+        program:
+          readOnly: true
+          type: string
+          enum:
+          - loy
+          - ppd
+          - tok
+          - sys
+          - rpt
+          - air
+          - caa
+          - gvx
+    DataType.Point.jsonld:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+    CaaLocationcode.jsonld:
+      type: object
+      properties:
+        caaLocationcodeId:
+          readOnly: true
+          type: string
+        merchant:
+          $ref: '#/components/schemas/Client.Merchant.jsonld'
+        id:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Currency.jsonld:
+      type: object
+      properties:
+        code:
+          type: string
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

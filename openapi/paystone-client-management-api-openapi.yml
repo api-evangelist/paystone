@@ -1,0 +1,1251 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Client Management API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Client Management
+paths:
+  /v1/clients:
+    get:
+      operationId: api_v1clients_get_collection
+      tags:
+      - Client Management
+      responses:
+        200:
+          description: List of clients.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: Client.jsonld-client.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Client.jsonld-client.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve all clients in the portfolio.
+      description: Retrieves the collection of Client resources.
+      parameters:
+      - name: page
+        in: query
+        description: The collection page number
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 1
+        style: form
+        explode: false
+      - name: itemsPerPage
+        in: query
+        description: The number of items per page
+        required: false
+        deprecated: false
+        schema:
+          type: integer
+          default: 30
+          minimum: 0
+          maximum: 30
+        style: form
+        explode: false
+      security:
+      - JWT: {}
+    post:
+      operationId: api_v1clients_post
+      tags:
+      - Client Management
+      responses:
+        201:
+          description: Client created successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Client.jsonld-client.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Create a new client.
+      description: "Creates a new client and provisions its database, account types, and product packages.  \n**Required fields:** `name`, `hostname`, `country`, `timeZone`, `currency`, `languages`, `programs`, `companyInfo`  \n**For loyalty clients:** also requires `accumulationRatioNumerator`, `accumulationRatioDenominator`, `debitRatioNumerator`, `debitRatioDenominator`  \n**For Moneris portfolios:** also requires `configureEgift`, `configureEloyalty`, `configureMemberPortal`, `giftCardsRestrictedWhereActivated`, `enableSboEmailAndSms`"
+      parameters: {}
+      requestBody:
+        description: The new Client resource
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Client-client.write'
+        required: true
+      security:
+      - JWT: {}
+  /v1/clients/{id}:
+    get:
+      operationId: api_v1clients_id_get
+      tags:
+      - Client Management
+      responses:
+        200:
+          description: Client retrieved successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Client.jsonld-client.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve a client by ID.
+      description: Retrieves a Client resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric client ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      security:
+      - JWT: {}
+    patch:
+      operationId: api_v1clients_id_patch
+      tags:
+      - Client Management
+      responses:
+        200:
+          description: Client updated successfully.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Client.jsonld-client.read'
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        404:
+          description: Not found — the requested resource does not exist.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Update an existing client.
+      description: Updates the Client resource.
+      parameters:
+      - name: id
+        in: path
+        description: Numeric client ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      requestBody:
+        description: The updated Client resource
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Client-client.patch.jsonMergePatch'
+        required: true
+      security:
+      - JWT: {}
+  /v1/clients/{id}/complete:
+    post:
+      operationId: api_v1clients_idcomplete_post
+      tags:
+      - Client Management
+      responses:
+        201:
+          description: Client resource created
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Client.jsonld-client.complete.read'
+          links: null
+        400:
+          description: Invalid input
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/Error.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          links: null
+        422:
+          description: Validation error — see violations array for field-level details.
+          content:
+            application/ld+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation.jsonld'
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConstraintViolation'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        200:
+          description: Client onboarding completed.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+        404:
+          description: Not found — the requested resource does not exist.
+      summary: Complete client onboarding.
+      description: 'Marks onboarding as complete and records the `completedOn` timestamp.
+
+        After this call the client is active and ready to process transactions.'
+      parameters:
+      - name: id
+        in: path
+        description: Numeric client ID.
+        required: true
+        deprecated: false
+        schema:
+          type: integer
+        style: simple
+        explode: false
+        example: 42
+      requestBody:
+        description: The new Client resource
+        content:
+          application/ld+json:
+            schema:
+              $ref: '#/components/schemas/Client-client.complete'
+        required: true
+      security:
+      - JWT: {}
+components:
+  schemas:
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    ConstraintViolation.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          status:
+            default: 422
+            type: integer
+          violations:
+            type: array
+            items:
+              type: object
+              properties:
+                propertyPath:
+                  type: string
+                  description: The property path of the violation
+                message:
+                  type: string
+                  description: The message associated with the violation
+                code:
+                  type: string
+                  description: The code of the violation
+                hint:
+                  type: string
+                  description: An extra hint to understand the violation
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: The serialized payload of the violation
+              required:
+              - propertyPath
+              - message
+          detail:
+            readOnly: true
+            type: string
+          description:
+            readOnly: true
+            type: string
+          type:
+            readOnly: true
+            type: string
+          title:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          instance:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: Unprocessable entity
+    Client-client.write:
+      type: object
+      required:
+      - name
+      - hostname
+      - country
+      - timeZone
+      - currency
+      - companyInfo
+      properties:
+        name:
+          minLength: 2
+          maxLength: 128
+          description: Name representing the client
+          type:
+          - string
+          - 'null'
+        hostname:
+          minLength: 1
+          maxLength: 60
+          pattern: ^((?!\-)[a-z0-9\-]*(?<!\-))$
+          description: Hostname for SBO client portals (lowercase letters, numbers and dashes only)
+          type:
+          - string
+          - 'null'
+        externalReference:
+          maxLength: 255
+          description: Client's own reference id
+          type:
+          - string
+          - 'null'
+        country:
+          enum:
+          - CA
+          - US
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        timeZone:
+          description: Client timezone (e.g., America/Toronto)
+          type:
+          - string
+          - 'null'
+        currency:
+          enum:
+          - CAD
+          - USD
+          description: Currency code (CAD or USD)
+          type:
+          - string
+          - 'null'
+        languages:
+          minItems: 1
+          description: Languages supported by the client (en, fr)
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        programs:
+          minItems: 1
+          description: Programs enabled for the client (loyalty, gift)
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        accumulationRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio numerator
+          type:
+          - integer
+          - 'null'
+        accumulationRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio denominator
+          type:
+          - integer
+          - 'null'
+        debitRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio numerator
+          type:
+          - integer
+          - 'null'
+        debitRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio denominator
+          type:
+          - integer
+          - 'null'
+        allowRedemptionWhenProfileCompleted:
+          description: Allow redemption when profile completed
+          default: false
+          type: boolean
+        cardStatusAfterFirstAccumulation:
+          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+          default: y
+          type:
+          - string
+          - 'null'
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+          - null
+        configureEgift:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        giftCardsRestrictedWhereActivated:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        configureEloyalty:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        configureMemberPortal:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        enableSboEmailAndSms:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        companyInfo:
+          anyOf:
+          - $ref: '#/components/schemas/CompanyInfo-client.write'
+          - type: 'null'
+    CompanyInfo-client.write:
+      type: object
+      required:
+      - address
+      - city
+      - province
+      - postalCode
+      - companyPhone
+      - website
+      - contactFirstName
+      - contactLastName
+      - contactEmail
+      - contactPhone
+      - contactLanguagePreference
+      properties:
+        address:
+          maxLength: 255
+          description: Street address of the company
+          type:
+          - string
+          - 'null'
+        city:
+          maxLength: 255
+          description: City of the company
+          type:
+          - string
+          - 'null'
+        province:
+          maxLength: 100
+          description: Province or state of the company
+          type:
+          - string
+          - 'null'
+        postalCode:
+          maxLength: 40
+          description: Postal or ZIP code of the company
+          type:
+          - string
+          - 'null'
+        companyPhone:
+          maxLength: 20
+          description: Phone number of the company
+          type:
+          - string
+          - 'null'
+        website:
+          maxLength: 255
+          description: Website URL of the company
+          type:
+          - string
+          - 'null'
+        contactFirstName:
+          maxLength: 128
+          description: First name of the primary contact
+          type:
+          - string
+          - 'null'
+        contactLastName:
+          maxLength: 128
+          description: Last name of the primary contact
+          type:
+          - string
+          - 'null'
+        contactEmail:
+          format: email
+          description: Email address of the primary contact
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        contactPhone:
+          maxLength: 20
+          description: Phone number of the primary contact
+          type:
+          - string
+          - 'null'
+        contactLanguagePreference:
+          enum:
+          - en
+          - fr
+          description: Preferred language of the primary contact (en or fr)
+          type:
+          - string
+          - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    Client.jsonld-client.complete.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          completedOn:
+            description: Date when client onboarding was completed
+            type:
+            - string
+            - 'null'
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Client.jsonld-client.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          name:
+            minLength: 2
+            maxLength: 128
+            description: Name representing the client
+            type:
+            - string
+            - 'null'
+          hostname:
+            minLength: 1
+            maxLength: 60
+            pattern: ^((?!\-)[a-z0-9\-]*(?<!\-))$
+            description: Hostname for SBO client portals (lowercase letters, numbers and dashes only)
+            type:
+            - string
+            - 'null'
+          accessKey:
+            description: Access key for the created client
+            type:
+            - string
+            - 'null'
+          status:
+            description: Client status. On PATCH only "active" or "suspended" are accepted.
+            default: pending
+            type:
+            - string
+            - 'null'
+            enum:
+            - pending
+            - active
+            - suspended
+            - deactivated
+            - archived
+            - null
+          externalReference:
+            maxLength: 255
+            description: Client's own reference id
+            type:
+            - string
+            - 'null'
+          country:
+            enum:
+            - CA
+            - US
+            description: Country code (CA or US)
+            type:
+            - string
+            - 'null'
+          timeZone:
+            description: Client timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          currency:
+            enum:
+            - CAD
+            - USD
+            description: Currency code (CAD or USD)
+            type:
+            - string
+            - 'null'
+          productPackage:
+            description: Product package name
+            type:
+            - string
+            - 'null'
+          billingPackages:
+            description: Billing package names
+            type:
+            - array
+            - 'null'
+            items:
+              type:
+              - string
+              - 'null'
+          languages:
+            description: Languages supported by the client (en, fr)
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          programs:
+            description: Programs enabled for the client (loyalty, gift)
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          creationDate:
+            description: Creation date
+            type:
+            - string
+            - 'null'
+          modificationDate:
+            description: Modification date
+            type:
+            - string
+            - 'null'
+          accumulationRatioNumerator:
+            description: Accumulation ratio numerator
+            type:
+            - integer
+            - 'null'
+          accumulationRatioDenominator:
+            description: Accumulation ratio denominator
+            type:
+            - integer
+            - 'null'
+          debitRatioNumerator:
+            description: Debit ratio numerator
+            type:
+            - integer
+            - 'null'
+          debitRatioDenominator:
+            description: Debit ratio denominator
+            type:
+            - integer
+            - 'null'
+          allowRedemptionWhenProfileCompleted:
+            description: Allow redemption when profile completed
+            default: false
+            type: boolean
+          cardStatusAfterFirstAccumulation:
+            description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+            default: y
+            type:
+            - string
+            - 'null'
+            enum:
+            - y
+            - no_pointredeem
+            - n
+            - preactive
+            - suspend
+            - lost
+            - archive
+            - lock_pin
+            - null
+          reverseTransactionForExpiredCards:
+            description: Reverse transaction for expired cards
+            type:
+            - boolean
+            - 'null'
+          pointsCalculationMethod:
+            description: Points calculation method
+            type:
+            - string
+            - 'null'
+          smallBusinessOffering:
+            description: Small business offering enabled
+            type:
+            - boolean
+            - 'null'
+          memberProfileAnonymization:
+            description: Member profile anonymization enabled
+            type:
+            - boolean
+            - 'null'
+          memberProfileAnonymizationDurationMonths:
+            description: Member profile anonymization duration in months
+            type:
+            - integer
+            - 'null'
+          memberProfileCreationRestriction:
+            description: Member profile creation age restriction enabled
+            type:
+            - boolean
+            - 'null'
+          memberAgeRestriction:
+            description: Minimum age required for member profile creation
+            type:
+            - integer
+            - 'null'
+          completeProfileRequiredFields:
+            description: Complete profile mandatory fields
+            type:
+            - array
+            - 'null'
+            items:
+              type:
+              - string
+              - 'null'
+          uniqueEmail:
+            description: Unique email required for contacts
+            type:
+            - boolean
+            - 'null'
+          uniquePhoneNumber:
+            description: Unique phone number required for contacts
+            type:
+            - boolean
+            - 'null'
+          emailCampaign:
+            description: Email campaign enabled
+            type:
+            - boolean
+            - 'null'
+          lightsOut:
+            description: Lights out mode enabled
+            type:
+            - boolean
+            - 'null'
+          singleSignOn:
+            description: Single sign-on enabled
+            type:
+            - boolean
+            - 'null'
+          identityProviderSettings:
+            description: Identity provider settings for SSO
+            type:
+            - string
+            - 'null'
+          giftCardOrdersAnonymization:
+            description: Gift card orders anonymization enabled
+            type:
+            - boolean
+            - 'null'
+          giftCardOrdersAnonymizationDurationMonths:
+            description: Gift card orders anonymization duration in months
+            type:
+            - integer
+            - 'null'
+          configureEgift:
+            description: Only used when Portfolio is Moneris
+            type:
+            - boolean
+            - 'null'
+          giftCardsRestrictedWhereActivated:
+            description: Only used when Portfolio is Moneris
+            type:
+            - boolean
+            - 'null'
+          configureEloyalty:
+            description: Only used when Portfolio is Moneris
+            type:
+            - boolean
+            - 'null'
+          configureMemberPortal:
+            description: Only used when Portfolio is Moneris
+            type:
+            - boolean
+            - 'null'
+          enableSboEmailAndSms:
+            description: Only used when Portfolio is Moneris
+            type:
+            - boolean
+            - 'null'
+          completedOn:
+            description: Date when client onboarding was completed
+            type:
+            - string
+            - 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Client-client.patch.jsonMergePatch:
+      type: object
+      properties:
+        status:
+          description: Client status. On PATCH only "active" or "suspended" are accepted.
+          default: pending
+          type:
+          - string
+          - 'null'
+          enum:
+          - pending
+          - active
+          - suspended
+          - deactivated
+          - archived
+          - null
+        accumulationRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio numerator
+          type:
+          - integer
+          - 'null'
+        accumulationRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio denominator
+          type:
+          - integer
+          - 'null'
+        debitRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio numerator
+          type:
+          - integer
+          - 'null'
+        debitRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio denominator
+          type:
+          - integer
+          - 'null'
+        allowRedemptionWhenProfileCompleted:
+          description: Allow redemption when profile completed
+          default: false
+          type: boolean
+        cardStatusAfterFirstAccumulation:
+          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+          default: y
+          type:
+          - string
+          - 'null'
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+          - null
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
+    Client-client.complete:
+      type: object
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT

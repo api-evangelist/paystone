@@ -1,0 +1,221 @@
+openapi: 3.2.0
+info:
+  title: DataCandy Member Portal API
+  description: 'REST API for the DataCandy platform. Provides endpoints for managing merchants,
+
+    clients, contacts, account types, transactions, webhooks, and portal configuration.
+
+
+    All endpoints require a JWT bearer token unless stated otherwise.'
+  version: 26.7.1.0-d9107e6
+servers:
+- url: /
+  description: ''
+security:
+- JWT: {}
+tags:
+- name: Member Portal
+paths:
+  /v1/clients/{accessKey}/portals/member:
+    get:
+      operationId: api_v1clients_accessKeyportalsmember_get_collection
+      tags:
+      - Member Portal
+      responses:
+        200:
+          description: List of member portal configurations.
+          content:
+            application/ld+json:
+              schema:
+                type: object
+                description: MemberPortal.jsonld-member_portal.read collection.
+                allOf:
+                - $ref: '#/components/schemas/HydraCollectionBaseSchema'
+                - type: object
+                  required:
+                  - hydra:member
+                  properties:
+                    hydra:member:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/MemberPortal.jsonld-member_portal.read'
+        403:
+          description: Forbidden — token does not have the required role.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 403
+                  message:
+                    type: string
+                    example: Access Denied.
+        401:
+          description: Unauthorized — missing or invalid JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: JWT Token not found
+      summary: Retrieve member portal configurations for a client.
+      description: Retrieves the collection of MemberPortal resources.
+      parameters:
+      - name: accessKey
+        in: path
+        description: Unique access key identifying the client.
+        required: true
+        deprecated: false
+        schema:
+          type: string
+        style: simple
+        explode: false
+        example: abc123def456
+      security:
+      - JWT: {}
+components:
+  schemas:
+    LocalizedString.jsonld-member_portal.read:
+      type: object
+      properties:
+        en:
+          description: English value
+          type:
+          - string
+          - 'null'
+        fr:
+          description: French value
+          type:
+          - string
+          - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    MemberPortal.jsonld-member_portal.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          displayName:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-member_portal.read'
+            - type: 'null'
+          url:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-member_portal.read'
+            - type: 'null'
+          isActive:
+            description: Whether the member portal is active
+            type:
+            - boolean
+            - 'null'
+          allowDigitalCardCreation:
+            description: Whether digital card creation is allowed
+            type:
+            - boolean
+            - 'null'
+          termsConditionsUrl:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-member_portal.read'
+            - type: 'null'
+          privacyPolicyUrl:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-member_portal.read'
+            - type: 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+  securitySchemes:
+    JWT:
+      type: http
+      description: Enter your JWT token (without the "Bearer" prefix).
+      scheme: bearer
+      bearerFormat: JWT
