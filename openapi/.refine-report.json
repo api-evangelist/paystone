@@ -1,0 +1,46 @@
+{
+  "provider": "paystone",
+  "sources": [
+    "_original/paystone-datacandy-openapi.yml"
+  ],
+  "outputs": [
+    "paystone-balance-portal-api-openapi.yml",
+    "paystone-client-management-api-openapi.yml",
+    "paystone-contact-api-openapi.yml",
+    "paystone-gift-account-type-api-openapi.yml",
+    "paystone-item-api-openapi.yml",
+    "paystone-loyalty-account-type-api-openapi.yml",
+    "paystone-loyalty-transaction-api-openapi.yml",
+    "paystone-member-portal-api-openapi.yml",
+    "paystone-merchant-management-api-openapi.yml",
+    "paystone-prepaid-transaction-api-openapi.yml",
+    "paystone-promo-account-type-api-openapi.yml",
+    "paystone-reward-api-openapi.yml",
+    "paystone-user-management-api-openapi.yml",
+    "paystone-webhook-management-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "paystone-datacandy-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "paystone-balance-portal-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-client-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-contact-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-gift-account-type-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-item-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-loyalty-account-type-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-loyalty-transaction-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-member-portal-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-merchant-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-prepaid-transaction-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-promo-account-type-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-reward-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-user-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "paystone-webhook-management-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

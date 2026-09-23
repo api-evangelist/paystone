@@ -65,7 +65,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve all gift account types for a client.
+      summary: Retrieve all gift account types for a client
       description: Retrieves the collection of GiftAccountType resources.
       parameters:
       - name: accessKey
@@ -130,7 +130,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve a gift account type by ID.
+      summary: Retrieve a gift account type by ID
       description: Retrieves a GiftAccountType resource.
       parameters:
       - name: accessKey
@@ -157,6 +157,31 @@ paths:
       - JWT: {}
 components:
   schemas:
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
     GiftAccountType.jsonld-account-type.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -248,8 +273,6 @@ components:
           readOnly: true
           description: A URI reference that identifies the problem type
           type: string
-    Money.jsonld-account-type.read:
-      type: object
     HydraCollectionBaseSchemaNoPagination:
       type: object
       properties:
@@ -312,44 +335,6 @@ components:
               hydra:last: string
               hydra:previous: string
               hydra:next: string
-    LocalizedString.jsonld-account-type.read:
-      type: object
-      properties:
-        en:
-          description: English value
-          type:
-          - string
-          - 'null'
-        fr:
-          description: French value
-          type:
-          - string
-          - 'null'
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -390,6 +375,21 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
+    LocalizedString.jsonld-account-type.read:
+      type: object
+      properties:
+        en:
+          description: English value
+          type:
+          - string
+          - 'null'
+        fr:
+          description: French value
+          type:
+          - string
+          - 'null'
+    Money.jsonld-account-type.read:
+      type: object
   securitySchemes:
     JWT:
       type: http

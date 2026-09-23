@@ -65,7 +65,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve all webhooks.
+      summary: Retrieve all webhooks
       description: Retrieves the collection of Webhook resources.
       parameters:
       - name: page
@@ -154,7 +154,7 @@ paths:
                   message:
                     type: string
                     example: Access Denied.
-      summary: Create a new webhook.
+      summary: Create a new webhook
       description: Creates a Webhook resource.
       parameters: {}
       requestBody:
@@ -216,7 +216,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve a webhook by ID.
+      summary: Retrieve a webhook by ID
       description: Retrieves a Webhook resource.
       parameters:
       - name: id
@@ -305,7 +305,7 @@ paths:
                   message:
                     type: string
                     example: Access Denied.
-      summary: Replace an existing webhook.
+      summary: Replace an existing webhook
       description: Replaces the Webhook resource.
       parameters:
       - name: id
@@ -401,7 +401,7 @@ paths:
                   message:
                     type: string
                     example: Access Denied.
-      summary: Update an existing webhook.
+      summary: Update an existing webhook
       description: Updates the Webhook resource.
       parameters:
       - name: id
@@ -425,148 +425,104 @@ paths:
       - JWT: {}
 components:
   schemas:
-    Error:
-      type: object
-      description: A representation of common errors.
-      properties:
-        title:
-          readOnly: true
-          description: A short, human-readable summary of the problem.
-          type:
-          - string
-          - 'null'
-        detail:
-          readOnly: true
-          description: A human-readable explanation specific to this occurrence of the problem.
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - number
-          - 'null'
-          examples:
-          - 404
-          default: 400
-        instance:
-          readOnly: true
-          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-          type:
-          - string
-          - 'null'
-        type:
-          readOnly: true
-          description: A URI reference that identifies the problem type
-          type: string
-    AccessGroup.jsonld:
-      type: object
-      properties:
-        id:
-          readOnly: true
-          type: integer
-        name:
-          type: string
-        banners:
-          type: array
-          items:
-            $ref: '#/components/schemas/Banner.jsonld'
-        merchants:
-          type: array
-          items:
-            $ref: '#/components/schemas/Client.Merchant.jsonld'
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
+    ConstraintViolation.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
         properties:
-          writeOnly: true
-          type: array
-          items:
+          status:
+            default: 422
+            type: integer
+          violations:
+            type: array
+            items:
+              type: object
+              properties:
+                propertyPath:
+                  type: string
+                  description: The property path of the violation
+                message:
+                  type: string
+                  description: The message associated with the violation
+                code:
+                  type: string
+                  description: The code of the violation
+                hint:
+                  type: string
+                  description: An extra hint to understand the violation
+                payload:
+                  type: object
+                  additionalProperties: true
+                  description: The serialized payload of the violation
+              required:
+              - propertyPath
+              - message
+          detail:
+            readOnly: true
+            type: string
+          description:
+            readOnly: true
+            type: string
+          type:
+            readOnly: true
+            type: string
+          title:
+            readOnly: true
             type:
             - string
             - 'null'
-        propertyValue:
-          writeOnly: true
-        validationName:
-          readOnly: true
-        entityTranslationPrefix:
-          readOnly: true
-          type: string
-        entitySearchValue:
-          readOnly: true
-          type: string
-        dbTranslationKey:
-          readOnly: true
-        translationKeyPrefix:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-      required:
-      - creationDate
-      - modificationDate
-    Event.jsonld:
+          instance:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: Unprocessable entity
+    HydraItemBaseSchema:
       type: object
       properties:
-        id:
-          readOnly: true
-          type: integer
-        webhook:
-          type: string
-          format: iri-reference
-          example: https://example.com/
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
-        type:
-          readOnly: true
-          type: string
-          enum:
-          - contact
-          - transaction
-        event:
-          anyOf:
+        '@context':
+          oneOf:
           - type: string
-            enum:
-            - created
-            - modified
-            - unsubscribed
-            - anonymized
-          - type: string
-            enum:
-            - loyalty.accumulation
-            - loyalty.add
-            - loyalty.complete_cancel
-            - loyalty.item_cancel
-            - loyalty.partial_cancel
-            - loyalty.redeem
-            - loyalty.subtract
-            - loyalty.balance_import
-            - loyalty.reward_earned
-            - loyalty.reward_redeem
-            - loyalty.reward_expired
-            - prepaid.complete_cancel
-            - prepaid.partial_cancel
-            - prepaid.balance_import
-            - prepaid.subtract
-            - prepaid.card_empty
-            - prepaid.redeem
-            - prepaid.redeem_unlock
-            - prepaid.add
-            - prepaid.activation
-            - prepaid.increment
-            - prepaid.credit_note_activation
-            - prepaid.credit_note_increment
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
     Event.jsonld-webhook.read_webhook.read.item:
       type: object
-    Webhook-webhook.write.item.jsonMergePatch:
+    Collection.jsonld:
+      type: object
+      properties:
+        empty:
+          readOnly: true
+        keys:
+          readOnly: true
+        values:
+          readOnly: true
+        iterator:
+          readOnly: true
+    Event.jsonld-webhook.read:
+      type: object
+    Webhook-webhook.write.item:
       type: object
       description: 'Webhooks let you subscribe to certain events and be notified '
+      required:
+      - name
+      - callbackUrl
       properties:
         name:
           minLength: 2
@@ -621,6 +577,170 @@ components:
                     - 'null'
                   required:
                     type: boolean
+    Webhook.jsonld-webhook.read_webhook.read.item:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        required:
+        - name
+        - callbackUrl
+        properties:
+          name:
+            minLength: 2
+            type: string
+          active:
+            default: true
+            type: boolean
+          callbackUrl:
+            format: uri
+            externalDocs:
+              url: https://schema.org/url
+            type: string
+          events:
+            type: array
+            items:
+              $ref: '#/components/schemas/Event.jsonld-webhook.read_webhook.read.item'
+          merchants:
+            type: array
+            items:
+              $ref: '#/components/schemas/Client.Merchant.jsonld-webhook.read_webhook.read.item'
+          creationDate:
+            type: string
+            format: date-time
+          modificationDate:
+            type: string
+            format: date-time
+      description: 'Webhooks let you subscribe to certain events and be notified '
+    Webhook-webhook.write.item.jsonMergePatch:
+      type: object
+      description: 'Webhooks let you subscribe to certain events and be notified '
+      properties:
+        name:
+          minLength: 2
+          type: string
+        active:
+          default: true
+          type: boolean
+        callbackUrl:
+          format: uri
+          externalDocs:
+            url: https://schema.org/url
+          type: string
+        secretToken:
+          type:
+          - string
+          - 'null'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event-webhook.write.item'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant-webhook.write.item'
+    Webhook.jsonld-webhook.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        required:
+        - name
+        - callbackUrl
+        properties:
+          name:
+            minLength: 2
+            type: string
+          active:
+            default: true
+            type: boolean
+          callbackUrl:
+            format: uri
+            externalDocs:
+              url: https://schema.org/url
+            type: string
+          events:
+            type: array
+            items:
+              $ref: '#/components/schemas/Event.jsonld-webhook.read'
+          creationDate:
+            type: string
+            format: date-time
+          modificationDate:
+            type: string
+            format: date-time
+      description: 'Webhooks let you subscribe to certain events and be notified '
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    Webhook.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          id:
+            readOnly: true
+            type: integer
+          name:
+            minLength: 2
+            type: string
+          active:
+            default: true
+            type: boolean
+          callbackUrl:
+            format: uri
+            externalDocs:
+              url: https://schema.org/url
+            type: string
+          secretToken:
+            type:
+            - string
+            - 'null'
+          events:
+            type: array
+            items:
+              $ref: '#/components/schemas/Event.jsonld'
+          merchants:
+            type: array
+            items:
+              $ref: '#/components/schemas/Client.Merchant.jsonld'
+          creationDate:
+            type: string
+            format: date-time
+          modificationDate:
+            type: string
+            format: date-time
+        required:
+        - name
+        - callbackUrl
+      description: 'Webhooks let you subscribe to certain events and be notified '
     Client.Merchant.jsonld:
       type: object
       properties:
@@ -850,8 +970,362 @@ components:
       - useShift
       - creationDate
       - modificationDate
+    DataType.Point.jsonld:
+      type: object
+      properties:
+        latitude:
+          type: number
+        longitude:
+          type: number
+    Client.Merchant-webhook.write.item:
+      type: object
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
+            readOnly: true
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
+            readOnly: true
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
+            readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
+          type:
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
     Client.Merchant.jsonld-webhook.read_webhook.read.item:
       type: object
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    MerchantCategory.jsonld:
+      type: object
+      properties:
+        exclusive:
+          default: '1'
+          type: boolean
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        id:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    AccessGroup.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        name:
+          type: string
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/Banner.jsonld'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant.jsonld'
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+      required:
+      - creationDate
+      - modificationDate
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    GeomPoint.jsonld:
+      type: object
+      properties:
+        geom:
+          $ref: '#/components/schemas/DataType.Point.jsonld'
+        id:
+          readOnly: true
+          type:
+          - integer
+          - 'null'
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Event-webhook.write.item:
+      type: object
+    MerchantSubcategory.jsonld:
+      type: object
+      properties:
+        externalReference:
+          type:
+          - string
+          - 'null'
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        merchantCategory:
+          anyOf:
+          - $ref: '#/components/schemas/MerchantCategory.jsonld'
+          - type: 'null'
+        merchants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Client.Merchant.jsonld'
+        id:
+          readOnly: true
+        properties:
+          writeOnly: true
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        propertyValue:
+          writeOnly: true
+        validationName:
+          readOnly: true
+        entityTranslationPrefix:
+          readOnly: true
+          type: string
+        entitySearchValue:
+          readOnly: true
+          type: string
+        dbTranslationKey:
+          readOnly: true
+        translationKeyPrefix:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Event.jsonld:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+        webhook:
+          type: string
+          format: iri-reference
+          example: https://example.com/
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+        type:
+          readOnly: true
+          type: string
+          enum:
+          - contact
+          - transaction
+        event:
+          anyOf:
+          - type: string
+            enum:
+            - created
+            - modified
+            - unsubscribed
+            - anonymized
+          - type: string
+            enum:
+            - loyalty.accumulation
+            - loyalty.add
+            - loyalty.complete_cancel
+            - loyalty.item_cancel
+            - loyalty.partial_cancel
+            - loyalty.redeem
+            - loyalty.subtract
+            - loyalty.balance_import
+            - loyalty.reward_earned
+            - loyalty.reward_redeem
+            - loyalty.reward_expired
+            - prepaid.complete_cancel
+            - prepaid.partial_cancel
+            - prepaid.balance_import
+            - prepaid.subtract
+            - prepaid.card_empty
+            - prepaid.redeem
+            - prepaid.redeem_unlock
+            - prepaid.add
+            - prepaid.activation
+            - prepaid.increment
+            - prepaid.credit_note_activation
+            - prepaid.credit_note_increment
     BannerTranslation.jsonld:
       type: object
       properties:
@@ -918,285 +1392,6 @@ components:
           - 'null'
       required:
       - locale
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    MerchantCategory.jsonld:
-      type: object
-      properties:
-        exclusive:
-          default: '1'
-          type: boolean
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
-        id:
-          readOnly: true
-        properties:
-          writeOnly: true
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        propertyValue:
-          writeOnly: true
-        validationName:
-          readOnly: true
-        entityTranslationPrefix:
-          readOnly: true
-          type: string
-        entitySearchValue:
-          readOnly: true
-          type: string
-        dbTranslationKey:
-          readOnly: true
-        translationKeyPrefix:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
-    Collection.jsonld:
-      type: object
-      properties:
-        empty:
-          readOnly: true
-        keys:
-          readOnly: true
-        values:
-          readOnly: true
-        iterator:
-          readOnly: true
-    ConstraintViolation:
-      type: object
-      description: Unprocessable entity
-      properties:
-        status:
-          default: 422
-          type: integer
-        violations:
-          type: array
-          items:
-            type: object
-            properties:
-              propertyPath:
-                type: string
-                description: The property path of the violation
-              message:
-                type: string
-                description: The message associated with the violation
-              code:
-                type: string
-                description: The code of the violation
-              hint:
-                type: string
-                description: An extra hint to understand the violation
-              payload:
-                type: object
-                additionalProperties: true
-                description: The serialized payload of the violation
-            required:
-            - propertyPath
-            - message
-        detail:
-          readOnly: true
-          type: string
-        type:
-          readOnly: true
-          type: string
-        title:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        instance:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    MerchantSubcategory.jsonld:
-      type: object
-      properties:
-        externalReference:
-          type:
-          - string
-          - 'null'
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
-        merchantCategory:
-          anyOf:
-          - $ref: '#/components/schemas/MerchantCategory.jsonld'
-          - type: 'null'
-        merchants:
-          type: array
-          items:
-            $ref: '#/components/schemas/Client.Merchant.jsonld'
-        id:
-          readOnly: true
-        properties:
-          writeOnly: true
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        propertyValue:
-          writeOnly: true
-        validationName:
-          readOnly: true
-        entityTranslationPrefix:
-          readOnly: true
-          type: string
-        entitySearchValue:
-          readOnly: true
-          type: string
-        dbTranslationKey:
-          readOnly: true
-        translationKeyPrefix:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    Client.Merchant-webhook.write.item:
-      type: object
-    Event.jsonld-webhook.read:
-      type: object
-    CaaLocationcode.jsonld:
-      type: object
-      properties:
-        caaLocationcodeId:
-          readOnly: true
-          type: string
-        merchant:
-          $ref: '#/components/schemas/Client.Merchant.jsonld'
-        id:
-          readOnly: true
-        properties:
-          writeOnly: true
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        propertyValue:
-          writeOnly: true
-        validationName:
-          readOnly: true
-        entityTranslationPrefix:
-          readOnly: true
-          type: string
-        entitySearchValue:
-          readOnly: true
-          type: string
-        dbTranslationKey:
-          readOnly: true
-        translationKeyPrefix:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    Webhook.jsonld:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          id:
-            readOnly: true
-            type: integer
-          name:
-            minLength: 2
-            type: string
-          active:
-            default: true
-            type: boolean
-          callbackUrl:
-            format: uri
-            externalDocs:
-              url: https://schema.org/url
-            type: string
-          secretToken:
-            type:
-            - string
-            - 'null'
-          events:
-            type: array
-            items:
-              $ref: '#/components/schemas/Event.jsonld'
-          merchants:
-            type: array
-            items:
-              $ref: '#/components/schemas/Client.Merchant.jsonld'
-          creationDate:
-            type: string
-            format: date-time
-          modificationDate:
-            type: string
-            format: date-time
-        required:
-        - name
-        - callbackUrl
-      description: 'Webhooks let you subscribe to certain events and be notified '
     Banner.jsonld:
       type: object
       properties:
@@ -1296,108 +1491,16 @@ components:
           type:
           - string
           - 'null'
-    ConstraintViolation.jsonld:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          status:
-            default: 422
-            type: integer
-          violations:
-            type: array
-            items:
-              type: object
-              properties:
-                propertyPath:
-                  type: string
-                  description: The property path of the violation
-                message:
-                  type: string
-                  description: The message associated with the violation
-                code:
-                  type: string
-                  description: The code of the violation
-                hint:
-                  type: string
-                  description: An extra hint to understand the violation
-                payload:
-                  type: object
-                  additionalProperties: true
-                  description: The serialized payload of the violation
-              required:
-              - propertyPath
-              - message
-          detail:
-            readOnly: true
-            type: string
-          description:
-            readOnly: true
-            type: string
-          type:
-            readOnly: true
-            type: string
-          title:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          instance:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-      description: Unprocessable entity
-    Error.jsonld:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          title:
-            readOnly: true
-            description: A short, human-readable summary of the problem.
-            type:
-            - string
-            - 'null'
-          detail:
-            readOnly: true
-            description: A human-readable explanation specific to this occurrence of the problem.
-            type:
-            - string
-            - 'null'
-          status:
-            type:
-            - number
-            - 'null'
-            examples:
-            - 404
-            default: 400
-          instance:
-            readOnly: true
-            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-            type:
-            - string
-            - 'null'
-          type:
-            readOnly: true
-            description: A URI reference that identifies the problem type
-            type: string
-          description:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-      description: A representation of common errors.
-    GeomPoint.jsonld:
+    CaaLocationcode.jsonld:
       type: object
       properties:
-        geom:
-          $ref: '#/components/schemas/DataType.Point.jsonld'
+        caaLocationcodeId:
+          readOnly: true
+          type: string
+        merchant:
+          $ref: '#/components/schemas/Client.Merchant.jsonld'
         id:
           readOnly: true
-          type:
-          - integer
-          - 'null'
         properties:
           writeOnly: true
           type: array
@@ -1422,109 +1525,6 @@ components:
           type:
           - string
           - 'null'
-    Webhook.jsonld-webhook.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        required:
-        - name
-        - callbackUrl
-        properties:
-          name:
-            minLength: 2
-            type: string
-          active:
-            default: true
-            type: boolean
-          callbackUrl:
-            format: uri
-            externalDocs:
-              url: https://schema.org/url
-            type: string
-          events:
-            type: array
-            items:
-              $ref: '#/components/schemas/Event.jsonld-webhook.read'
-          creationDate:
-            type: string
-            format: date-time
-          modificationDate:
-            type: string
-            format: date-time
-      description: 'Webhooks let you subscribe to certain events and be notified '
-    Event-webhook.write.item:
-      type: object
-    Webhook-webhook.write.item:
-      type: object
-      description: 'Webhooks let you subscribe to certain events and be notified '
-      required:
-      - name
-      - callbackUrl
-      properties:
-        name:
-          minLength: 2
-          type: string
-        active:
-          default: true
-          type: boolean
-        callbackUrl:
-          format: uri
-          externalDocs:
-            url: https://schema.org/url
-          type: string
-        secretToken:
-          type:
-          - string
-          - 'null'
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/Event-webhook.write.item'
-        merchants:
-          type: array
-          items:
-            $ref: '#/components/schemas/Client.Merchant-webhook.write.item'
-    Webhook.jsonld-webhook.read_webhook.read.item:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        required:
-        - name
-        - callbackUrl
-        properties:
-          name:
-            minLength: 2
-            type: string
-          active:
-            default: true
-            type: boolean
-          callbackUrl:
-            format: uri
-            externalDocs:
-              url: https://schema.org/url
-            type: string
-          events:
-            type: array
-            items:
-              $ref: '#/components/schemas/Event.jsonld-webhook.read_webhook.read.item'
-          merchants:
-            type: array
-            items:
-              $ref: '#/components/schemas/Client.Merchant.jsonld-webhook.read_webhook.read.item'
-          creationDate:
-            type: string
-            format: date-time
-          modificationDate:
-            type: string
-            format: date-time
-      description: 'Webhooks let you subscribe to certain events and be notified '
-    DataType.Point.jsonld:
-      type: object
-      properties:
-        latitude:
-          type: number
-        longitude:
-          type: number
   securitySchemes:
     JWT:
       type: http

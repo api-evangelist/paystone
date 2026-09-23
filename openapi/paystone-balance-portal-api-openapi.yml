@@ -65,7 +65,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve balance portal configurations for a client.
+      summary: Retrieve balance portal configurations for a client
       description: Retrieves the collection of BalancePortal resources.
       parameters:
       - name: accessKey
@@ -82,6 +82,99 @@ paths:
       - JWT: {}
 components:
   schemas:
+    LocalizedString.jsonld-balance_portal.read:
+      type: object
+      properties:
+        en:
+          description: English value
+          type:
+          - string
+          - 'null'
+        fr:
+          description: French value
+          type:
+          - string
+          - 'null'
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    BalancePortal.jsonld-balance_portal.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          isActive:
+            description: Whether the balance portal is active
+            type:
+            - boolean
+            - 'null'
+          hasSecurityCode:
+            description: Whether security code (PIN) is required
+            type:
+            - boolean
+            - 'null'
+          isGiftcardOrderEnabled:
+            description: Whether gift card ordering is enabled
+            type:
+            - boolean
+            - 'null'
+          isOnlineGiftcardEnabled:
+            description: Whether online gifting portal is enabled
+            type:
+            - boolean
+            - 'null'
+          isOnlineGiftcardHomepageEnabled:
+            description: Whether online gift card is shown on homepage (only when online gifting portal is enabled)
+            type:
+            - boolean
+            - 'null'
+          isRegiftEnabled:
+            description: Whether regift functionality is enabled (only when online gifting portal is enabled)
+            type:
+            - boolean
+            - 'null'
+          balancePortalUrls:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
+            - type: 'null'
+          onlineGiftcardPortalUrls:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
+            - type: 'null'
+          displayName:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
+            - type: 'null'
+          termsConditionsUrl:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
+            - type: 'null'
+          privacyPolicyUrl:
+            anyOf:
+            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
+            - type: 'null'
     HydraCollectionBaseSchemaNoPagination:
       type: object
       properties:
@@ -144,99 +237,6 @@ components:
               hydra:last: string
               hydra:previous: string
               hydra:next: string
-    LocalizedString.jsonld-balance_portal.read:
-      type: object
-      properties:
-        en:
-          description: English value
-          type:
-          - string
-          - 'null'
-        fr:
-          description: French value
-          type:
-          - string
-          - 'null'
-    BalancePortal.jsonld-balance_portal.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          isActive:
-            description: Whether the balance portal is active
-            type:
-            - boolean
-            - 'null'
-          hasSecurityCode:
-            description: Whether security code (PIN) is required
-            type:
-            - boolean
-            - 'null'
-          isGiftcardOrderEnabled:
-            description: Whether gift card ordering is enabled
-            type:
-            - boolean
-            - 'null'
-          isOnlineGiftcardEnabled:
-            description: Whether online gifting portal is enabled
-            type:
-            - boolean
-            - 'null'
-          isOnlineGiftcardHomepageEnabled:
-            description: Whether online gift card is shown on homepage (only when online gifting portal is enabled)
-            type:
-            - boolean
-            - 'null'
-          isRegiftEnabled:
-            description: Whether regift functionality is enabled (only when online gifting portal is enabled)
-            type:
-            - boolean
-            - 'null'
-          balancePortalUrls:
-            anyOf:
-            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
-            - type: 'null'
-          onlineGiftcardPortalUrls:
-            anyOf:
-            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
-            - type: 'null'
-          displayName:
-            anyOf:
-            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
-            - type: 'null'
-          termsConditionsUrl:
-            anyOf:
-            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
-            - type: 'null'
-          privacyPolicyUrl:
-            anyOf:
-            - $ref: '#/components/schemas/LocalizedString.jsonld-balance_portal.read'
-            - type: 'null'
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
   securitySchemes:
     JWT:
       type: http

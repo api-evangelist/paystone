@@ -65,7 +65,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve all loyalty transactions.
+      summary: Retrieve all loyalty transactions
       description: Retrieves the collection of LoyaltyTransaction resources.
       parameters:
       - name: page
@@ -292,7 +292,7 @@ paths:
                   message:
                     type: string
                     example: JWT Token not found
-      summary: Retrieve a loyalty transaction by ID.
+      summary: Retrieve a loyalty transaction by ID
       description: Retrieves a LoyaltyTransaction resource.
       parameters:
       - name: id
@@ -309,68 +309,162 @@ paths:
       - JWT: {}
 components:
   schemas:
-    Reward.jsonld-transaction.read_transaction.read.item:
+    CommunicationPreference.jsonld-transaction.read_transaction.read.item:
+      type: object
+      properties:
+        communicationEmail:
+          readOnly: true
+          default: false
+          type: boolean
+        communicationSms:
+          readOnly: true
+          default: false
+          type: boolean
+        consent:
+          readOnly: true
+          default: refused
+          type: string
+          enum:
+          - implied
+          - express
+          - refused
+        consentDate:
+          readOnly: true
+          type: string
+          format: date-time
+        emailAllowed:
+          readOnly: true
+          type: boolean
+        smsAllowed:
+          readOnly: true
+          type: boolean
+        communicationAllowed:
+          readOnly: true
+          type: boolean
+        consentValidUntil:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+          format: date-time
+    Money.jsonld-transaction.read:
+      type: object
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Card.jsonld-transaction.read_transaction.read.item:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: string
+        status:
+          readOnly: true
+          type: string
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+        creationDate:
+          type: string
+          format: date-time
+        modificationDate:
+          type: string
+          format: date-time
+    Contact.jsonld-transaction.read_transaction.read.item:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
       - type: object
         properties:
+          externalReference:
+            readOnly: true
+            type: string
+          firstName:
+            readOnly: true
+            type: string
+          lastName:
+            readOnly: true
+            type: string
+          isActive:
+            readOnly: true
+            type: boolean
+          isComplete:
+            readOnly: true
+            type: boolean
+          language:
+            readOnly: true
+            type: string
+          gender:
+            readOnly: true
+            type: string
+          birthdate:
+            readOnly: true
+            type: string
+            format: date-time
+          email:
+            readOnly: true
+            type: string
+          phoneNumber:
+            readOnly: true
+            type: string
+          phoneType:
+            readOnly: true
+            type: string
+            enum:
+            - FIXED_LINE
+            - MOBILE
+            - FIXED_LINE_OR_MOBILE
+            - UNKNOWN
+          phoneNumberVerified:
+            readOnly: true
+            type: boolean
+          address:
+            $ref: '#/components/schemas/Client.Address.jsonld-transaction.read_transaction.read.item'
+          communicationPreference:
+            $ref: '#/components/schemas/CommunicationPreference.jsonld-transaction.read_transaction.read.item'
+          termsAndConditionsAcceptanceDate:
+            readOnly: true
+            type: string
+            format: date-time
           creationDate:
             readOnly: true
             type: string
             format: date-time
-          expireOnDate:
+          modificationDate:
             readOnly: true
             type: string
             format: date-time
-          rewardValue:
+          completionDate:
             readOnly: true
-            type:
-            - number
-            - 'null'
-          type:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          sku:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          quantity:
-            readOnly: true
-            type:
-            - integer
-            - 'null'
-          labelEn:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          labelFr:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          redeemableItems:
-            readOnly: true
-            type: array
-            items:
-              type: object
-              properties:
-                sku:
-                  type: string
-                labelEn:
-                  type: string
-                  nullable: true
-                labelFr:
-                  type: string
-                  nullable: true
-                creationDate:
-                  type: string
-                  nullable: true
-    Money.jsonld-transaction.read_transaction.read.item:
-      type: object
+            type: string
+            format: date-time
     LoyaltyTransaction.jsonld-transaction.read_transaction.read.item:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -558,6 +652,70 @@ components:
             - $ref: '#/components/schemas/Contact.jsonld-transaction.read_transaction.read.item'
             - type: 'null'
             readOnly: true
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    Client.Merchant.jsonld-transaction.read_transaction.read.item:
+      type: object
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
     Error:
       type: object
       description: A representation of common errors.
@@ -591,104 +749,108 @@ components:
           readOnly: true
           description: A URI reference that identifies the problem type
           type: string
-    Card.jsonld-transaction.read_transaction.read.item:
+    Money.jsonld-transaction.read_transaction.read.item:
       type: object
-      properties:
-        id:
-          readOnly: true
-          type: string
-        status:
-          readOnly: true
-          type: string
-          enum:
-          - y
-          - no_pointredeem
-          - n
-          - preactive
-          - suspend
-          - lost
-          - archive
-          - lock_pin
-        creationDate:
-          type: string
-          format: date-time
-        modificationDate:
-          type: string
-          format: date-time
-    Item.jsonld-transaction.read_transaction.read.item:
+    Reward.jsonld-transaction.read_transaction.read.item:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
       - type: object
         properties:
-          id:
-            readOnly: true
-            type: integer
-          lineNumber:
+          creationDate:
             readOnly: true
             type: string
+            format: date-time
+          expireOnDate:
+            readOnly: true
+            type: string
+            format: date-time
+          rewardValue:
+            readOnly: true
+            type:
+            - number
+            - 'null'
+          type:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          sku:
+            readOnly: true
+            type:
+            - string
+            - 'null'
           quantity:
             readOnly: true
-            type: string
-          currentQuantity:
+            type:
+            - integer
+            - 'null'
+          labelEn:
             readOnly: true
-            type: string
-          amount:
-            $ref: '#/components/schemas/Money.jsonld-transaction.read_transaction.read.item'
-          points:
+            type:
+            - string
+            - 'null'
+          labelFr:
             readOnly: true
-            type: string
-          ipc:
+            type:
+            - string
+            - 'null'
+          redeemableItems:
             readOnly: true
-            type: string
-          upc:
+            type: array
+            items:
+              type: object
+              properties:
+                sku:
+                  type: string
+                labelEn:
+                  type: string
+                  nullable: true
+                labelFr:
+                  type: string
+                  nullable: true
+                creationDate:
+                  type: string
+                  nullable: true
+    Error.jsonld:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          title:
             readOnly: true
-            type: string
-          eligibleForAccumulation:
+            description: A short, human-readable summary of the problem.
+            type:
+            - string
+            - 'null'
+          detail:
             readOnly: true
-            type: boolean
-          transaction:
-            anyOf:
-            - $ref: '#/components/schemas/Transaction.jsonld-transaction.read_transaction.read.item'
-            - type: 'null'
+            description: A human-readable explanation specific to this occurrence of the problem.
+            type:
+            - string
+            - 'null'
+          status:
+            type:
+            - number
+            - 'null'
+            examples:
+            - 404
+            default: 400
+          instance:
             readOnly: true
-    CommunicationPreference.jsonld-transaction.read_transaction.read.item:
-      type: object
-      properties:
-        communicationEmail:
-          readOnly: true
-          default: false
-          type: boolean
-        communicationSms:
-          readOnly: true
-          default: false
-          type: boolean
-        consent:
-          readOnly: true
-          default: refused
-          type: string
-          enum:
-          - implied
-          - express
-          - refused
-        consentDate:
-          readOnly: true
-          type: string
-          format: date-time
-        emailAllowed:
-          readOnly: true
-          type: boolean
-        smsAllowed:
-          readOnly: true
-          type: boolean
-        communicationAllowed:
-          readOnly: true
-          type: boolean
-        consentValidUntil:
-          readOnly: true
+            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+            type:
+            - string
+            - 'null'
           type:
-          - string
-          - 'null'
-          format: date-time
+            readOnly: true
+            description: A URI reference that identifies the problem type
+            type: string
+          description:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+      description: A representation of common errors.
     LoyaltyTransaction.jsonld-transaction.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -846,68 +1008,44 @@ components:
             - 'null'
             format: iri-reference
             example: https://example.com/
-    HydraCollectionBaseSchemaNoPagination:
+    Client.Merchant.jsonld-transaction.read:
       type: object
-      properties:
-        hydra:totalItems:
-          type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
-                type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
-    HydraCollectionBaseSchema:
+    Item.jsonld-transaction.read_transaction.read.item:
       allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
       - type: object
         properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
+          id:
+            readOnly: true
+            type: integer
+          lineNumber:
+            readOnly: true
+            type: string
+          quantity:
+            readOnly: true
+            type: string
+          currentQuantity:
+            readOnly: true
+            type: string
+          amount:
+            $ref: '#/components/schemas/Money.jsonld-transaction.read_transaction.read.item'
+          points:
+            readOnly: true
+            type: string
+          ipc:
+            readOnly: true
+            type: string
+          upc:
+            readOnly: true
+            type: string
+          eligibleForAccumulation:
+            readOnly: true
+            type: boolean
+          transaction:
+            anyOf:
+            - $ref: '#/components/schemas/Transaction.jsonld-transaction.read_transaction.read.item'
+            - type: 'null'
+            readOnly: true
     Client.Address.jsonld-transaction.read_transaction.read.item:
       type: object
       properties:
@@ -929,144 +1067,6 @@ components:
         countryCode:
           readOnly: true
           type: string
-    Client.Merchant.jsonld-transaction.read:
-      type: object
-    Client.Merchant.jsonld-transaction.read_transaction.read.item:
-      type: object
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    Money.jsonld-transaction.read:
-      type: object
-    Contact.jsonld-transaction.read_transaction.read.item:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          externalReference:
-            readOnly: true
-            type: string
-          firstName:
-            readOnly: true
-            type: string
-          lastName:
-            readOnly: true
-            type: string
-          isActive:
-            readOnly: true
-            type: boolean
-          isComplete:
-            readOnly: true
-            type: boolean
-          language:
-            readOnly: true
-            type: string
-          gender:
-            readOnly: true
-            type: string
-          birthdate:
-            readOnly: true
-            type: string
-            format: date-time
-          email:
-            readOnly: true
-            type: string
-          phoneNumber:
-            readOnly: true
-            type: string
-          phoneType:
-            readOnly: true
-            type: string
-            enum:
-            - FIXED_LINE
-            - MOBILE
-            - FIXED_LINE_OR_MOBILE
-            - UNKNOWN
-          phoneNumberVerified:
-            readOnly: true
-            type: boolean
-          address:
-            $ref: '#/components/schemas/Client.Address.jsonld-transaction.read_transaction.read.item'
-          communicationPreference:
-            $ref: '#/components/schemas/CommunicationPreference.jsonld-transaction.read_transaction.read.item'
-          termsAndConditionsAcceptanceDate:
-            readOnly: true
-            type: string
-            format: date-time
-          creationDate:
-            readOnly: true
-            type: string
-            format: date-time
-          modificationDate:
-            readOnly: true
-            type: string
-            format: date-time
-          completionDate:
-            readOnly: true
-            type: string
-            format: date-time
-    Error.jsonld:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          title:
-            readOnly: true
-            description: A short, human-readable summary of the problem.
-            type:
-            - string
-            - 'null'
-          detail:
-            readOnly: true
-            description: A human-readable explanation specific to this occurrence of the problem.
-            type:
-            - string
-            - 'null'
-          status:
-            type:
-            - number
-            - 'null'
-            examples:
-            - 404
-            default: 400
-          instance:
-            readOnly: true
-            description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-            type:
-            - string
-            - 'null'
-          type:
-            readOnly: true
-            description: A URI reference that identifies the problem type
-            type: string
-          description:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-      description: A representation of common errors.
     Transaction.jsonld-transaction.read_transaction.read.item:
       type: object
       properties:
