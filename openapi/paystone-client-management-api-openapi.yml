@@ -427,6 +427,128 @@ paths:
       - JWT: {}
 components:
   schemas:
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    CompanyInfo-client.write:
+      type: object
+      required:
+      - address
+      - city
+      - province
+      - postalCode
+      - companyPhone
+      - website
+      - contactFirstName
+      - contactLastName
+      - contactEmail
+      - contactPhone
+      - contactLanguagePreference
+      properties:
+        address:
+          maxLength: 255
+          description: Street address of the company
+          type:
+          - string
+          - 'null'
+        city:
+          maxLength: 255
+          description: City of the company
+          type:
+          - string
+          - 'null'
+        province:
+          maxLength: 100
+          description: Province or state of the company
+          type:
+          - string
+          - 'null'
+        postalCode:
+          maxLength: 40
+          description: Postal or ZIP code of the company
+          type:
+          - string
+          - 'null'
+        companyPhone:
+          maxLength: 20
+          description: Phone number of the company
+          type:
+          - string
+          - 'null'
+        website:
+          maxLength: 255
+          description: Website URL of the company
+          type:
+          - string
+          - 'null'
+        contactFirstName:
+          maxLength: 128
+          description: First name of the primary contact
+          type:
+          - string
+          - 'null'
+        contactLastName:
+          maxLength: 128
+          description: Last name of the primary contact
+          type:
+          - string
+          - 'null'
+        contactEmail:
+          format: email
+          description: Email address of the primary contact
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        contactPhone:
+          maxLength: 20
+          description: Phone number of the primary contact
+          type:
+          - string
+          - 'null'
+        contactLanguagePreference:
+          enum:
+          - en
+          - fr
+          description: Preferred language of the primary contact (en or fr)
+          type:
+          - string
+          - 'null'
+    Client-client.complete:
+      type: object
+    Client.jsonld-client.complete.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          completedOn:
+            description: Date when client onboarding was completed
+            type:
+            - string
+            - 'null'
     Client.jsonld-client.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -684,6 +806,180 @@ components:
             type:
             - string
             - 'null'
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    Client-client.patch.jsonMergePatch:
+      type: object
+      properties:
+        status:
+          description: Client status. On PATCH only "active" or "suspended" are accepted.
+          default: pending
+          type:
+          - string
+          - 'null'
+          enum:
+          - pending
+          - active
+          - suspended
+          - deactivated
+          - archived
+          - null
+        accumulationRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio numerator
+          type:
+          - integer
+          - 'null'
+        accumulationRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio denominator
+          type:
+          - integer
+          - 'null'
+        debitRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio numerator
+          type:
+          - integer
+          - 'null'
+        debitRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio denominator
+          type:
+          - integer
+          - 'null'
+        allowRedemptionWhenProfileCompleted:
+          description: Allow redemption when profile completed
+          default: false
+          type: boolean
+        cardStatusAfterFirstAccumulation:
+          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+          default: y
+          type:
+          - string
+          - 'null'
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+          - null
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
     Client-client.write:
       type: object
       required:
@@ -861,121 +1157,6 @@ components:
               hydra:last: string
               hydra:previous: string
               hydra:next: string
-    HydraCollectionBaseSchemaNoPagination:
-      type: object
-      properties:
-        hydra:totalItems:
-          type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
-                type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
-    CompanyInfo-client.write:
-      type: object
-      required:
-      - address
-      - city
-      - province
-      - postalCode
-      - companyPhone
-      - website
-      - contactFirstName
-      - contactLastName
-      - contactEmail
-      - contactPhone
-      - contactLanguagePreference
-      properties:
-        address:
-          maxLength: 255
-          description: Street address of the company
-          type:
-          - string
-          - 'null'
-        city:
-          maxLength: 255
-          description: City of the company
-          type:
-          - string
-          - 'null'
-        province:
-          maxLength: 100
-          description: Province or state of the company
-          type:
-          - string
-          - 'null'
-        postalCode:
-          maxLength: 40
-          description: Postal or ZIP code of the company
-          type:
-          - string
-          - 'null'
-        companyPhone:
-          maxLength: 20
-          description: Phone number of the company
-          type:
-          - string
-          - 'null'
-        website:
-          maxLength: 255
-          description: Website URL of the company
-          type:
-          - string
-          - 'null'
-        contactFirstName:
-          maxLength: 128
-          description: First name of the primary contact
-          type:
-          - string
-          - 'null'
-        contactLastName:
-          maxLength: 128
-          description: Last name of the primary contact
-          type:
-          - string
-          - 'null'
-        contactEmail:
-          format: email
-          description: Email address of the primary contact
-          externalDocs:
-            url: https://schema.org/email
-          type:
-          - string
-          - 'null'
-        contactPhone:
-          maxLength: 20
-          description: Phone number of the primary contact
-          type:
-          - string
-          - 'null'
-        contactLanguagePreference:
-          enum:
-          - en
-          - fr
-          description: Preferred language of the primary contact (en or fr)
-          type:
-          - string
-          - 'null'
     ConstraintViolation.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1028,39 +1209,6 @@ components:
             - string
             - 'null'
       description: Unprocessable entity
-    Error:
-      type: object
-      description: A representation of common errors.
-      properties:
-        title:
-          readOnly: true
-          description: A short, human-readable summary of the problem.
-          type:
-          - string
-          - 'null'
-        detail:
-          readOnly: true
-          description: A human-readable explanation specific to this occurrence of the problem.
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - number
-          - 'null'
-          examples:
-          - 404
-          default: 400
-        instance:
-          readOnly: true
-          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-          type:
-          - string
-          - 'null'
-        type:
-          readOnly: true
-          description: A URI reference that identifies the problem type
-          type: string
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1101,154 +1249,6 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    Client-client.patch.jsonMergePatch:
-      type: object
-      properties:
-        status:
-          description: Client status. On PATCH only "active" or "suspended" are accepted.
-          default: pending
-          type:
-          - string
-          - 'null'
-          enum:
-          - pending
-          - active
-          - suspended
-          - deactivated
-          - archived
-          - null
-        accumulationRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio numerator
-          type:
-          - integer
-          - 'null'
-        accumulationRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio denominator
-          type:
-          - integer
-          - 'null'
-        debitRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio numerator
-          type:
-          - integer
-          - 'null'
-        debitRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio denominator
-          type:
-          - integer
-          - 'null'
-        allowRedemptionWhenProfileCompleted:
-          description: Allow redemption when profile completed
-          default: false
-          type: boolean
-        cardStatusAfterFirstAccumulation:
-          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
-          default: y
-          type:
-          - string
-          - 'null'
-          enum:
-          - y
-          - no_pointredeem
-          - n
-          - preactive
-          - suspend
-          - lost
-          - archive
-          - lock_pin
-          - null
-    Client.jsonld-client.complete.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          completedOn:
-            description: Date when client onboarding was completed
-            type:
-            - string
-            - 'null'
-    Client-client.complete:
-      type: object
-    ConstraintViolation:
-      type: object
-      description: Unprocessable entity
-      properties:
-        status:
-          default: 422
-          type: integer
-        violations:
-          type: array
-          items:
-            type: object
-            properties:
-              propertyPath:
-                type: string
-                description: The property path of the violation
-              message:
-                type: string
-                description: The message associated with the violation
-              code:
-                type: string
-                description: The code of the violation
-              hint:
-                type: string
-                description: An extra hint to understand the violation
-              payload:
-                type: object
-                additionalProperties: true
-                description: The serialized payload of the violation
-            required:
-            - propertyPath
-            - message
-        detail:
-          readOnly: true
-          type: string
-        type:
-          readOnly: true
-          type: string
-        title:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        instance:
-          readOnly: true
-          type:
-          - string
-          - 'null'
   securitySchemes:
     JWT:
       type: http

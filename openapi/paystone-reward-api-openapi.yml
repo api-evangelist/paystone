@@ -84,39 +84,66 @@ paths:
       - JWT: {}
 components:
   schemas:
-    Error:
-      type: object
-      description: A representation of common errors.
-      properties:
-        title:
-          readOnly: true
-          description: A short, human-readable summary of the problem.
+    Reward.jsonld-transaction.read.item:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          creationDate:
+            readOnly: true
+            type: string
+            format: date-time
+          expireOnDate:
+            readOnly: true
+            type: string
+            format: date-time
+          rewardValue:
+            readOnly: true
+            type:
+            - number
+            - 'null'
           type:
-          - string
-          - 'null'
-        detail:
-          readOnly: true
-          description: A human-readable explanation specific to this occurrence of the problem.
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - number
-          - 'null'
-          examples:
-          - 404
-          default: 400
-        instance:
-          readOnly: true
-          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-          type:
-          - string
-          - 'null'
-        type:
-          readOnly: true
-          description: A URI reference that identifies the problem type
-          type: string
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          sku:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          quantity:
+            readOnly: true
+            type:
+            - integer
+            - 'null'
+          labelEn:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          labelFr:
+            readOnly: true
+            type:
+            - string
+            - 'null'
+          redeemableItems:
+            readOnly: true
+            type: array
+            items:
+              type: object
+              properties:
+                sku:
+                  type: string
+                labelEn:
+                  type: string
+                  nullable: true
+                labelFr:
+                  type: string
+                  nullable: true
+                creationDate:
+                  type: string
+                  nullable: true
     HydraItemBaseSchema:
       type: object
       properties:
@@ -182,66 +209,39 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
-    Reward.jsonld-transaction.read.item:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          creationDate:
-            readOnly: true
-            type: string
-            format: date-time
-          expireOnDate:
-            readOnly: true
-            type: string
-            format: date-time
-          rewardValue:
-            readOnly: true
-            type:
-            - number
-            - 'null'
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
           type:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          sku:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          quantity:
-            readOnly: true
-            type:
-            - integer
-            - 'null'
-          labelEn:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          labelFr:
-            readOnly: true
-            type:
-            - string
-            - 'null'
-          redeemableItems:
-            readOnly: true
-            type: array
-            items:
-              type: object
-              properties:
-                sku:
-                  type: string
-                labelEn:
-                  type: string
-                  nullable: true
-                labelFr:
-                  type: string
-                  nullable: true
-                creationDate:
-                  type: string
-                  nullable: true
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
   securitySchemes:
     JWT:
       type: http
