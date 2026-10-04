@@ -272,6 +272,9 @@ apis:
   - type: APIReference
     url: https://api.paystone.com/docs
 common:
+- type: CapabilityMap
+  url: capabilities/paystone-capability-edges.yml
+  name: Paystone Business Capability Map
 - type: Authentication
   url: authentication/paystone-authentication.yml
 - type: AgenticAccess
