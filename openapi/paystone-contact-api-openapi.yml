@@ -169,31 +169,38 @@ paths:
       - JWT: {}
 components:
   schemas:
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
             properties:
-              '@vocab':
+              '@id':
                 type: string
-              hydra:
+                format: iri-reference
+              '@type':
                 type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
     Contact.jsonld-contact.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -261,38 +268,89 @@ components:
             readOnly: true
             type: string
             format: date-time
-    Error:
+    CommunicationPreference.jsonld-contact.read:
       type: object
-      description: A representation of common errors.
       properties:
-        title:
+        communicationEmail:
           readOnly: true
-          description: A short, human-readable summary of the problem.
+          default: false
+          type: boolean
+        communicationSms:
+          readOnly: true
+          default: false
+          type: boolean
+        consent:
+          readOnly: true
+          default: refused
+          type: string
+          enum:
+          - implied
+          - express
+          - refused
+        consentDate:
+          readOnly: true
+          type: string
+          format: date-time
+        emailAllowed:
+          readOnly: true
+          type: boolean
+        smsAllowed:
+          readOnly: true
+          type: boolean
+        communicationAllowed:
+          readOnly: true
+          type: boolean
+        consentValidUntil:
+          readOnly: true
           type:
           - string
           - 'null'
-        detail:
+          format: date-time
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    Client.Address.jsonld-contact.read:
+      type: object
+      properties:
+        addressLine1:
           readOnly: true
-          description: A human-readable explanation specific to this occurrence of the problem.
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - number
-          - 'null'
-          examples:
-          - 404
-          default: 400
-        instance:
+          type: string
+        addressLine2:
           readOnly: true
-          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-          type:
-          - string
-          - 'null'
-        type:
+          type: string
+        city:
           readOnly: true
-          description: A URI reference that identifies the problem type
+          type: string
+        postalCode:
+          readOnly: true
+          type: string
+        regionCode:
+          readOnly: true
+          type: string
+        countryCode:
+          readOnly: true
           type: string
     HydraCollectionBaseSchemaNoPagination:
       type: object
@@ -324,59 +382,6 @@ components:
                     - 'null'
                   required:
                     type: boolean
-    Client.Address.jsonld-contact.read:
-      type: object
-      properties:
-        addressLine1:
-          readOnly: true
-          type: string
-        addressLine2:
-          readOnly: true
-          type: string
-        city:
-          readOnly: true
-          type: string
-        postalCode:
-          readOnly: true
-          type: string
-        regionCode:
-          readOnly: true
-          type: string
-        countryCode:
-          readOnly: true
-          type: string
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -417,44 +422,39 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
-    CommunicationPreference.jsonld-contact.read:
+    Error:
       type: object
+      description: A representation of common errors.
       properties:
-        communicationEmail:
+        title:
           readOnly: true
-          default: false
-          type: boolean
-        communicationSms:
-          readOnly: true
-          default: false
-          type: boolean
-        consent:
-          readOnly: true
-          default: refused
-          type: string
-          enum:
-          - implied
-          - express
-          - refused
-        consentDate:
-          readOnly: true
-          type: string
-          format: date-time
-        emailAllowed:
-          readOnly: true
-          type: boolean
-        smsAllowed:
-          readOnly: true
-          type: boolean
-        communicationAllowed:
-          readOnly: true
-          type: boolean
-        consentValidUntil:
-          readOnly: true
+          description: A short, human-readable summary of the problem.
           type:
           - string
           - 'null'
-          format: date-time
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
   securitySchemes:
     JWT:
       type: http

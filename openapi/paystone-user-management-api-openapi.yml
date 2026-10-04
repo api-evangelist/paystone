@@ -353,94 +353,6 @@ paths:
       - JWT: {}
 components:
   schemas:
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    Error:
-      type: object
-      description: A representation of common errors.
-      properties:
-        title:
-          readOnly: true
-          description: A short, human-readable summary of the problem.
-          type:
-          - string
-          - 'null'
-        detail:
-          readOnly: true
-          description: A human-readable explanation specific to this occurrence of the problem.
-          type:
-          - string
-          - 'null'
-        status:
-          type:
-          - number
-          - 'null'
-          examples:
-          - 404
-          default: 400
-        instance:
-          readOnly: true
-          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
-          type:
-          - string
-          - 'null'
-        type:
-          readOnly: true
-          description: A URI reference that identifies the problem type
-          type: string
-    HydraCollectionBaseSchemaNoPagination:
-      type: object
-      properties:
-        hydra:totalItems:
-          type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
-                type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
     ConstraintViolation:
       type: object
       description: Unprocessable entity
@@ -488,6 +400,139 @@ components:
           type:
           - string
           - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    User.jsonld-user.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          username:
+            description: Unique username for the user
+            type:
+            - string
+            - 'null'
+          name:
+            description: Full name of the user
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address of the user
+            type:
+            - string
+            - 'null'
+          roles:
+            description: Role codes assigned to this user
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          isActive:
+            description: Whether the user is active
+            type:
+            - boolean
+            - 'null'
+          enforceTwoFactorAuth:
+            description: Whether to enforce two-factor authentication
+            default: false
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: User language preference (en or fr)
+            type:
+            - string
+            - 'null'
+          creationDate:
+            description: Date and time the user was created
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            description: Date and time the user was last modified
+            type:
+            - string
+            - 'null'
+            format: date-time
+          userGroups:
+            description: User groups assigned to this user, with their IDs and names
+            type: array
+            items:
+              type:
+              - string
+              - 'null'
+          twoFactorAuthEnabled:
+            description: Whether two-factor authentication is enabled for the user
+            default: false
+            type: boolean
+          merchantAccessLevel:
+            description: 'Merchant access: "all" grants access to all merchants, or an array of merchant IDs the user can access'
+            default: all
+            anyOf:
+            - type: array
+              items:
+                type:
+                - string
+                - 'null'
+            - type: string
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
     User-user.write:
       type: object
       required:
@@ -548,38 +593,36 @@ components:
           type:
           - integer
           - 'null'
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -731,82 +774,39 @@ components:
           type:
           - string
           - 'null'
-    User.jsonld-user.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          username:
-            description: Unique username for the user
-            type:
-            - string
-            - 'null'
-          name:
-            description: Full name of the user
-            type:
-            - string
-            - 'null'
-          email:
-            description: Email address of the user
-            type:
-            - string
-            - 'null'
-          roles:
-            description: Role codes assigned to this user
-            type: array
-            items:
-              type:
-              - string
-              - 'null'
-          isActive:
-            description: Whether the user is active
-            type:
-            - boolean
-            - 'null'
-          enforceTwoFactorAuth:
-            description: Whether to enforce two-factor authentication
-            default: false
-            type:
-            - boolean
-            - 'null'
-          language:
-            description: User language preference (en or fr)
-            type:
-            - string
-            - 'null'
-          creationDate:
-            description: Date and time the user was created
-            type:
-            - string
-            - 'null'
-            format: date-time
-          modificationDate:
-            description: Date and time the user was last modified
-            type:
-            - string
-            - 'null'
-            format: date-time
-          userGroups:
-            description: User groups assigned to this user, with their IDs and names
-            type: array
-            items:
-              type:
-              - string
-              - 'null'
-          twoFactorAuthEnabled:
-            description: Whether two-factor authentication is enabled for the user
-            default: false
-            type: boolean
-          merchantAccessLevel:
-            description: 'Merchant access: "all" grants access to all merchants, or an array of merchant IDs the user can access'
-            default: all
-            anyOf:
-            - type: array
-              items:
-                type:
-                - string
-                - 'null'
-            - type: string
+    Error:
+      type: object
+      description: A representation of common errors.
+      properties:
+        title:
+          readOnly: true
+          description: A short, human-readable summary of the problem.
+          type:
+          - string
+          - 'null'
+        detail:
+          readOnly: true
+          description: A human-readable explanation specific to this occurrence of the problem.
+          type:
+          - string
+          - 'null'
+        status:
+          type:
+          - number
+          - 'null'
+          examples:
+          - 404
+          default: 400
+        instance:
+          readOnly: true
+          description: A URI reference that identifies the specific occurrence of the problem. It may or may not yield further information if dereferenced.
+          type:
+          - string
+          - 'null'
+        type:
+          readOnly: true
+          description: A URI reference that identifies the problem type
+          type: string
   securitySchemes:
     JWT:
       type: http
