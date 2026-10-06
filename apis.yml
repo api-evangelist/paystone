@@ -72,7 +72,7 @@ tags_original:
 - Gift Cards
 - Loyalty
 created: '2026-07-24'
-modified: '2026-07-24'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: paystone:paystone-balance-portal-api
@@ -272,6 +272,10 @@ apis:
   - type: APIReference
     url: https://api.paystone.com/docs
 common:
+- url: https://www.paystone.com/resources/tag/blog
+  type: Blog
+- url: https://www.paystone.com/resources/rss.xml
+  type: BlogRSS
 - type: CapabilityMap
   url: capabilities/paystone-capability-edges.yml
   name: Paystone Business Capability Map
