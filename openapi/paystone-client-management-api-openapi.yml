@@ -427,184 +427,8 @@ paths:
       - JWT: {}
 components:
   schemas:
-    ConstraintViolation:
+    Client-client.complete:
       type: object
-      description: Unprocessable entity
-      properties:
-        status:
-          default: 422
-          type: integer
-        violations:
-          type: array
-          items:
-            type: object
-            properties:
-              propertyPath:
-                type: string
-                description: The property path of the violation
-              message:
-                type: string
-                description: The message associated with the violation
-              code:
-                type: string
-                description: The code of the violation
-              hint:
-                type: string
-                description: An extra hint to understand the violation
-              payload:
-                type: object
-                additionalProperties: true
-                description: The serialized payload of the violation
-            required:
-            - propertyPath
-            - message
-        detail:
-          readOnly: true
-          type: string
-        type:
-          readOnly: true
-          type: string
-        title:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        instance:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    Client.jsonld-client.complete.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          completedOn:
-            description: Date when client onboarding was completed
-            type:
-            - string
-            - 'null'
-    Client-client.patch.jsonMergePatch:
-      type: object
-      properties:
-        status:
-          description: Client status. On PATCH only "active" or "suspended" are accepted.
-          default: pending
-          type:
-          - string
-          - 'null'
-          enum:
-          - pending
-          - active
-          - suspended
-          - deactivated
-          - archived
-          - null
-        accumulationRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio numerator
-          type:
-          - integer
-          - 'null'
-        accumulationRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio denominator
-          type:
-          - integer
-          - 'null'
-        debitRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio numerator
-          type:
-          - integer
-          - 'null'
-        debitRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio denominator
-          type:
-          - integer
-          - 'null'
-        allowRedemptionWhenProfileCompleted:
-          description: Allow redemption when profile completed
-          default: false
-          type: boolean
-        cardStatusAfterFirstAccumulation:
-          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
-          default: y
-          type:
-          - string
-          - 'null'
-          enum:
-          - y
-          - no_pointredeem
-          - n
-          - preactive
-          - suspend
-          - lost
-          - archive
-          - lock_pin
-          - null
     CompanyInfo-client.write:
       type: object
       required:
@@ -690,153 +514,61 @@ components:
           type:
           - string
           - 'null'
-    Client-client.write:
+    HydraItemBaseSchema:
       type: object
-      required:
-      - name
-      - hostname
-      - country
-      - timeZone
-      - currency
-      - companyInfo
       properties:
-        name:
-          minLength: 2
-          maxLength: 128
-          description: Name representing the client
-          type:
-          - string
-          - 'null'
-        hostname:
-          minLength: 1
-          maxLength: 60
-          pattern: ^((?!\-)[a-z0-9\-]*(?<!\-))$
-          description: Hostname for SBO client portals (lowercase letters, numbers and dashes only)
-          type:
-          - string
-          - 'null'
-        externalReference:
-          maxLength: 255
-          description: Client's own reference id
-          type:
-          - string
-          - 'null'
-        country:
-          enum:
-          - CA
-          - US
-          description: Country code (CA or US)
-          type:
-          - string
-          - 'null'
-        timeZone:
-          description: Client timezone (e.g., America/Toronto)
-          type:
-          - string
-          - 'null'
-        currency:
-          enum:
-          - CAD
-          - USD
-          description: Currency code (CAD or USD)
-          type:
-          - string
-          - 'null'
-        languages:
-          minItems: 1
-          description: Languages supported by the client (en, fr)
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        programs:
-          minItems: 1
-          description: Programs enabled for the client (loyalty, gift)
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        accumulationRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio numerator
-          type:
-          - integer
-          - 'null'
-        accumulationRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Accumulation ratio denominator
-          type:
-          - integer
-          - 'null'
-        debitRatioNumerator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio numerator
-          type:
-          - integer
-          - 'null'
-        debitRatioDenominator:
-          minimum: 1
-          maximum: 16777215
-          description: Debit ratio denominator
-          type:
-          - integer
-          - 'null'
-        allowRedemptionWhenProfileCompleted:
-          description: Allow redemption when profile completed
-          default: false
-          type: boolean
-        cardStatusAfterFirstAccumulation:
-          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
-          default: y
-          type:
-          - string
-          - 'null'
-          enum:
-          - y
-          - no_pointredeem
-          - n
-          - preactive
-          - suspend
-          - lost
-          - archive
-          - lock_pin
-          - null
-        configureEgift:
-          description: Only used when Portfolio is Moneris
-          type:
-          - boolean
-          - 'null'
-        giftCardsRestrictedWhereActivated:
-          description: Only used when Portfolio is Moneris
-          type:
-          - boolean
-          - 'null'
-        configureEloyalty:
-          description: Only used when Portfolio is Moneris
-          type:
-          - boolean
-          - 'null'
-        configureMemberPortal:
-          description: Only used when Portfolio is Moneris
-          type:
-          - boolean
-          - 'null'
-        enableSboEmailAndSms:
-          description: Only used when Portfolio is Moneris
-          type:
-          - boolean
-          - 'null'
-        companyInfo:
-          anyOf:
-          - $ref: '#/components/schemas/CompanyInfo-client.write'
-          - type: 'null'
-    Client-client.complete:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    HydraCollectionBaseSchemaNoPagination:
       type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
     Client.jsonld-client.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1094,36 +826,272 @@ components:
             type:
             - string
             - 'null'
-    HydraCollectionBaseSchemaNoPagination:
+    Client-client.patch.jsonMergePatch:
       type: object
       properties:
-        hydra:totalItems:
+        status:
+          description: Client status. On PATCH only "active" or "suspended" are accepted.
+          default: pending
+          type:
+          - string
+          - 'null'
+          enum:
+          - pending
+          - active
+          - suspended
+          - deactivated
+          - archived
+          - null
+        accumulationRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio numerator
+          type:
+          - integer
+          - 'null'
+        accumulationRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio denominator
+          type:
+          - integer
+          - 'null'
+        debitRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio numerator
+          type:
+          - integer
+          - 'null'
+        debitRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio denominator
+          type:
+          - integer
+          - 'null'
+        allowRedemptionWhenProfileCompleted:
+          description: Allow redemption when profile completed
+          default: false
+          type: boolean
+        cardStatusAfterFirstAccumulation:
+          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+          default: y
+          type:
+          - string
+          - 'null'
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+          - null
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
           type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
                 type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Client.jsonld-client.complete.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          completedOn:
+            description: Date when client onboarding was completed
+            type:
+            - string
+            - 'null'
+    Client-client.write:
+      type: object
+      required:
+      - name
+      - hostname
+      - country
+      - timeZone
+      - currency
+      - companyInfo
+      properties:
+        name:
+          minLength: 2
+          maxLength: 128
+          description: Name representing the client
+          type:
+          - string
+          - 'null'
+        hostname:
+          minLength: 1
+          maxLength: 60
+          pattern: ^((?!\-)[a-z0-9\-]*(?<!\-))$
+          description: Hostname for SBO client portals (lowercase letters, numbers and dashes only)
+          type:
+          - string
+          - 'null'
+        externalReference:
+          maxLength: 255
+          description: Client's own reference id
+          type:
+          - string
+          - 'null'
+        country:
+          enum:
+          - CA
+          - US
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        timeZone:
+          description: Client timezone (e.g., America/Toronto)
+          type:
+          - string
+          - 'null'
+        currency:
+          enum:
+          - CAD
+          - USD
+          description: Currency code (CAD or USD)
+          type:
+          - string
+          - 'null'
+        languages:
+          minItems: 1
+          description: Languages supported by the client (en, fr)
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        programs:
+          minItems: 1
+          description: Programs enabled for the client (loyalty, gift)
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        accumulationRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio numerator
+          type:
+          - integer
+          - 'null'
+        accumulationRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Accumulation ratio denominator
+          type:
+          - integer
+          - 'null'
+        debitRatioNumerator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio numerator
+          type:
+          - integer
+          - 'null'
+        debitRatioDenominator:
+          minimum: 1
+          maximum: 16777215
+          description: Debit ratio denominator
+          type:
+          - integer
+          - 'null'
+        allowRedemptionWhenProfileCompleted:
+          description: Allow redemption when profile completed
+          default: false
+          type: boolean
+        cardStatusAfterFirstAccumulation:
+          description: Card status after first accumulation (ACTIVE or ACTIVE_NO_REDEEM)
+          default: y
+          type:
+          - string
+          - 'null'
+          enum:
+          - y
+          - no_pointredeem
+          - n
+          - preactive
+          - suspend
+          - lost
+          - archive
+          - lock_pin
+          - null
+        configureEgift:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        giftCardsRestrictedWhereActivated:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        configureEloyalty:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        configureMemberPortal:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        enableSboEmailAndSms:
+          description: Only used when Portfolio is Moneris
+          type:
+          - boolean
+          - 'null'
+        companyInfo:
+          anyOf:
+          - $ref: '#/components/schemas/CompanyInfo-client.write'
+          - type: 'null'
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1216,6 +1184,38 @@ components:
             - string
             - 'null'
       description: Unprocessable entity
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
     Error:
       type: object
       description: A representation of common errors.

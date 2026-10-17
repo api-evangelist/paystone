@@ -157,63 +157,6 @@ paths:
       - JWT: {}
 components:
   schemas:
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
     LoyaltyAccountType.jsonld-account-type.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -247,19 +190,31 @@ components:
           category:
             description: Account type category
             type: string
-    LocalizedString.jsonld-account-type.read:
+    HydraItemBaseSchema:
       type: object
       properties:
-        en:
-          description: English value
-          type:
-          - string
-          - 'null'
-        fr:
-          description: French value
-          type:
-          - string
-          - 'null'
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
     HydraCollectionBaseSchemaNoPagination:
       type: object
       properties:
@@ -330,6 +285,51 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
+    LocalizedString.jsonld-account-type.read:
+      type: object
+      properties:
+        en:
+          description: English value
+          type:
+          - string
+          - 'null'
+        fr:
+          description: French value
+          type:
+          - string
+          - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
     Error:
       type: object
       description: A representation of common errors.

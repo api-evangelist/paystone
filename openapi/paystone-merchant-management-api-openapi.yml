@@ -698,7 +698,7 @@ paths:
       - JWT: {}
 components:
   schemas:
-    Address.jsonld-merchant.read_merchant.read.item:
+    Address.jsonld-merchant.read:
       type: object
       properties:
         addressLine1:
@@ -731,298 +731,6 @@ components:
           type:
           - string
           - 'null'
-    ConstraintViolation:
-      type: object
-      description: Unprocessable entity
-      properties:
-        status:
-          default: 422
-          type: integer
-        violations:
-          type: array
-          items:
-            type: object
-            properties:
-              propertyPath:
-                type: string
-                description: The property path of the violation
-              message:
-                type: string
-                description: The message associated with the violation
-              code:
-                type: string
-                description: The code of the violation
-              hint:
-                type: string
-                description: An extra hint to understand the violation
-              payload:
-                type: object
-                additionalProperties: true
-                description: The serialized payload of the violation
-            required:
-            - propertyPath
-            - message
-        detail:
-          readOnly: true
-          type: string
-        type:
-          readOnly: true
-          type: string
-        title:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        instance:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    Address-merchant.write:
-      type: object
-      properties:
-        addressLine1:
-          description: Street address
-          type:
-          - string
-          - 'null'
-        addressLine2:
-          description: Street address line 2
-          type:
-          - string
-          - 'null'
-        city:
-          description: City
-          type:
-          - string
-          - 'null'
-        postalCode:
-          description: Postal code
-          type:
-          - string
-          - 'null'
-        countryCode:
-          description: Country code (CA or US)
-          type:
-          - string
-          - 'null'
-        regionCode:
-          description: Region/province/state code (e.g., ON, QC)
-          type:
-          - string
-          - 'null'
-    Address.jsonld-merchant.write:
-      type: object
-      properties:
-        addressLine1:
-          description: Street address
-          type:
-          - string
-          - 'null'
-        addressLine2:
-          description: Street address line 2
-          type:
-          - string
-          - 'null'
-        city:
-          description: City
-          type:
-          - string
-          - 'null'
-        postalCode:
-          description: Postal code
-          type:
-          - string
-          - 'null'
-        countryCode:
-          description: Country code (CA or US)
-          type:
-          - string
-          - 'null'
-        regionCode:
-          description: Region/province/state code (e.g., ON, QC)
-          type:
-          - string
-          - 'null'
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
-    Address-merchant.patch:
-      type: object
-      properties:
-        addressLine1:
-          description: Street address
-          type:
-          - string
-          - 'null'
-        addressLine2:
-          description: Street address line 2
-          type:
-          - string
-          - 'null'
-        city:
-          description: City
-          type:
-          - string
-          - 'null'
-        postalCode:
-          description: Postal code
-          type:
-          - string
-          - 'null'
-        countryCode:
-          description: Country code (CA or US)
-          type:
-          - string
-          - 'null'
-        regionCode:
-          description: Region/province/state code (e.g., ON, QC)
-          type:
-          - string
-          - 'null'
-    HydraItemBaseSchema:
-      type: object
-      properties:
-        '@context':
-          oneOf:
-          - type: string
-          - type: object
-            properties:
-              '@vocab':
-                type: string
-              hydra:
-                type: string
-                enum:
-                - http://www.w3.org/ns/hydra/core#
-            required:
-            - '@vocab'
-            - hydra
-            additionalProperties: true
-        '@id':
-          type: string
-        '@type':
-          type: string
-      required:
-      - '@id'
-      - '@type'
-    Merchant.jsonld-merchant.read:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          name:
-            description: Name of the merchant
-            type:
-            - string
-            - 'null'
-          storeNumber:
-            description: Unique store number within the client
-            type:
-            - string
-            - 'null'
-          type:
-            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
-            type:
-            - string
-            - 'null'
-          isActive:
-            description: Merchant status (active, inactive)
-            type:
-            - boolean
-            - 'null'
-          language:
-            description: Language code (en or fr)
-            type:
-            - string
-            - 'null'
-          timezone:
-            description: Timezone (e.g., America/Toronto)
-            type:
-            - string
-            - 'null'
-          email:
-            description: Email address
-            type:
-            - string
-            - 'null'
-          phoneNumber:
-            description: Phone number
-            type:
-            - string
-            - 'null'
-          faxNumber:
-            description: Fax number
-            type:
-            - string
-            - 'null'
-          contactName:
-            description: Contact name
-            type:
-            - string
-            - 'null'
-          externalReference:
-            description: External reference ID
-            type:
-            - string
-            - 'null'
-          address:
-            anyOf:
-            - $ref: '#/components/schemas/Address.jsonld-merchant.read'
-            - type: 'null'
-          parent:
-            description: Parent merchant ID
-            type:
-            - integer
-            - 'null'
-          latitude:
-            description: Latitude coordinate (-90 to 90)
-            type:
-            - number
-            - 'null'
-          longitude:
-            description: Longitude coordinate (-180 to 180)
-            type:
-            - number
-            - 'null'
-          creationDate:
-            type:
-            - string
-            - 'null'
-            format: date-time
-          modificationDate:
-            type:
-            - string
-            - 'null'
-            format: date-time
     Merchant.jsonld-merchant.write:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1142,6 +850,364 @@ components:
             type:
             - string
             - 'null'
+    Point.jsonld-merchant.read_merchant.read.item:
+      type: object
+      properties:
+        longitude:
+          type: number
+        latitude:
+          type: number
+    HydraItemBaseSchema:
+      type: object
+      properties:
+        '@context':
+          oneOf:
+          - type: string
+          - type: object
+            properties:
+              '@vocab':
+                type: string
+              hydra:
+                type: string
+                enum:
+                - http://www.w3.org/ns/hydra/core#
+            required:
+            - '@vocab'
+            - hydra
+            additionalProperties: true
+        '@id':
+          type: string
+        '@type':
+          type: string
+      required:
+      - '@id'
+      - '@type'
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
+    Address-merchant.write:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Merchant.jsonld-merchant.read:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          name:
+            description: Name of the merchant
+            type:
+            - string
+            - 'null'
+          storeNumber:
+            description: Unique store number within the client
+            type:
+            - string
+            - 'null'
+          type:
+            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+            type:
+            - string
+            - 'null'
+          isActive:
+            description: Merchant status (active, inactive)
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: Language code (en or fr)
+            type:
+            - string
+            - 'null'
+          timezone:
+            description: Timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address
+            type:
+            - string
+            - 'null'
+          phoneNumber:
+            description: Phone number
+            type:
+            - string
+            - 'null'
+          faxNumber:
+            description: Fax number
+            type:
+            - string
+            - 'null'
+          contactName:
+            description: Contact name
+            type:
+            - string
+            - 'null'
+          externalReference:
+            description: External reference ID
+            type:
+            - string
+            - 'null'
+          address:
+            anyOf:
+            - $ref: '#/components/schemas/Address.jsonld-merchant.read'
+            - type: 'null'
+          parent:
+            description: Parent merchant ID
+            type:
+            - integer
+            - 'null'
+          latitude:
+            description: Latitude coordinate (-90 to 90)
+            type:
+            - number
+            - 'null'
+          longitude:
+            description: Longitude coordinate (-180 to 180)
+            type:
+            - number
+            - 'null'
+          creationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+    Merchant.jsonld-merchant.read_merchant.read.item:
+      allOf:
+      - $ref: '#/components/schemas/HydraItemBaseSchema'
+      - type: object
+        properties:
+          name:
+            description: Name of the merchant
+            type:
+            - string
+            - 'null'
+          storeNumber:
+            description: Unique store number within the client
+            type:
+            - string
+            - 'null'
+          type:
+            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
+            type:
+            - string
+            - 'null'
+          isActive:
+            description: Merchant status (active, inactive)
+            type:
+            - boolean
+            - 'null'
+          language:
+            description: Language code (en or fr)
+            type:
+            - string
+            - 'null'
+          timezone:
+            description: Timezone (e.g., America/Toronto)
+            type:
+            - string
+            - 'null'
+          email:
+            description: Email address
+            type:
+            - string
+            - 'null'
+          phoneNumber:
+            description: Phone number
+            type:
+            - string
+            - 'null'
+          faxNumber:
+            description: Fax number
+            type:
+            - string
+            - 'null'
+          contactName:
+            description: Contact name
+            type:
+            - string
+            - 'null'
+          externalReference:
+            description: External reference ID
+            type:
+            - string
+            - 'null'
+          address:
+            anyOf:
+            - $ref: '#/components/schemas/Address.jsonld-merchant.read_merchant.read.item'
+            - type: 'null'
+          parent:
+            description: Parent merchant ID
+            type:
+            - integer
+            - 'null'
+          latitude:
+            description: Latitude coordinate (-90 to 90)
+            type:
+            - number
+            - 'null'
+          longitude:
+            description: Longitude coordinate (-180 to 180)
+            type:
+            - number
+            - 'null'
+          creationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          modificationDate:
+            type:
+            - string
+            - 'null'
+            format: date-time
+          coordinates:
+            anyOf:
+            - $ref: '#/components/schemas/Point.jsonld-merchant.read_merchant.read.item'
+            - type: 'null'
+            readOnly: true
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    Address-merchant.patch:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
     Merchant-merchant.patch.jsonMergePatch:
       type: object
       properties:
@@ -1248,13 +1314,6 @@ components:
             - string
             - 'null'
       description: A representation of common errors.
-    Point.jsonld-merchant.read_merchant.read.item:
-      type: object
-      properties:
-        longitude:
-          type: number
-        latitude:
-          type: number
     Merchant-merchant.write:
       type: object
       required:
@@ -1372,130 +1431,6 @@ components:
           type:
           - string
           - 'null'
-    HydraCollectionBaseSchemaNoPagination:
-      type: object
-      properties:
-        hydra:totalItems:
-          type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
-                type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
-    Merchant.jsonld-merchant.read_merchant.read.item:
-      allOf:
-      - $ref: '#/components/schemas/HydraItemBaseSchema'
-      - type: object
-        properties:
-          name:
-            description: Name of the merchant
-            type:
-            - string
-            - 'null'
-          storeNumber:
-            description: Unique store number within the client
-            type:
-            - string
-            - 'null'
-          type:
-            description: Merchant type (point_of_sale, head_office, e-commerce, web_pos, third_party, other)
-            type:
-            - string
-            - 'null'
-          isActive:
-            description: Merchant status (active, inactive)
-            type:
-            - boolean
-            - 'null'
-          language:
-            description: Language code (en or fr)
-            type:
-            - string
-            - 'null'
-          timezone:
-            description: Timezone (e.g., America/Toronto)
-            type:
-            - string
-            - 'null'
-          email:
-            description: Email address
-            type:
-            - string
-            - 'null'
-          phoneNumber:
-            description: Phone number
-            type:
-            - string
-            - 'null'
-          faxNumber:
-            description: Fax number
-            type:
-            - string
-            - 'null'
-          contactName:
-            description: Contact name
-            type:
-            - string
-            - 'null'
-          externalReference:
-            description: External reference ID
-            type:
-            - string
-            - 'null'
-          address:
-            anyOf:
-            - $ref: '#/components/schemas/Address.jsonld-merchant.read_merchant.read.item'
-            - type: 'null'
-          parent:
-            description: Parent merchant ID
-            type:
-            - integer
-            - 'null'
-          latitude:
-            description: Latitude coordinate (-90 to 90)
-            type:
-            - number
-            - 'null'
-          longitude:
-            description: Longitude coordinate (-180 to 180)
-            type:
-            - number
-            - 'null'
-          creationDate:
-            type:
-            - string
-            - 'null'
-            format: date-time
-          modificationDate:
-            type:
-            - string
-            - 'null'
-            format: date-time
-          coordinates:
-            anyOf:
-            - $ref: '#/components/schemas/Point.jsonld-merchant.read_merchant.read.item'
-            - type: 'null'
-            readOnly: true
     ConstraintViolation.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -1548,7 +1483,72 @@ components:
             - string
             - 'null'
       description: Unprocessable entity
-    Address.jsonld-merchant.read:
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
+    Address.jsonld-merchant.read_merchant.read.item:
+      type: object
+      properties:
+        addressLine1:
+          description: Street address
+          type:
+          - string
+          - 'null'
+        addressLine2:
+          description: Street address line 2
+          type:
+          - string
+          - 'null'
+        city:
+          description: City
+          type:
+          - string
+          - 'null'
+        postalCode:
+          description: Postal code
+          type:
+          - string
+          - 'null'
+        countryCode:
+          description: Country code (CA or US)
+          type:
+          - string
+          - 'null'
+        regionCode:
+          description: Region/province/state code (e.g., ON, QC)
+          type:
+          - string
+          - 'null'
+    Address.jsonld-merchant.write:
       type: object
       properties:
         addressLine1:

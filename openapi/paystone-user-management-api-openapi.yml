@@ -353,85 +353,6 @@ paths:
       - JWT: {}
 components:
   schemas:
-    ConstraintViolation:
-      type: object
-      description: Unprocessable entity
-      properties:
-        status:
-          default: 422
-          type: integer
-        violations:
-          type: array
-          items:
-            type: object
-            properties:
-              propertyPath:
-                type: string
-                description: The property path of the violation
-              message:
-                type: string
-                description: The message associated with the violation
-              code:
-                type: string
-                description: The code of the violation
-              hint:
-                type: string
-                description: An extra hint to understand the violation
-              payload:
-                type: object
-                additionalProperties: true
-                description: The serialized payload of the violation
-            required:
-            - propertyPath
-            - message
-        detail:
-          readOnly: true
-          type: string
-        type:
-          readOnly: true
-          type: string
-        title:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-        instance:
-          readOnly: true
-          type:
-          - string
-          - 'null'
-    HydraCollectionBaseSchema:
-      allOf:
-      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
-      - type: object
-        properties:
-          hydra:view:
-            type: object
-            properties:
-              '@id':
-                type: string
-                format: iri-reference
-              '@type':
-                type: string
-              hydra:first:
-                type: string
-                format: iri-reference
-              hydra:last:
-                type: string
-                format: iri-reference
-              hydra:previous:
-                type: string
-                format: iri-reference
-              hydra:next:
-                type: string
-                format: iri-reference
-            example:
-              '@id': string
-              '@type': string
-              hydra:first: string
-              hydra:last: string
-              hydra:previous: string
-              hydra:next: string
     User.jsonld-user.read:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -533,6 +454,36 @@ components:
       required:
       - '@id'
       - '@type'
+    HydraCollectionBaseSchemaNoPagination:
+      type: object
+      properties:
+        hydra:totalItems:
+          type: integer
+          minimum: 0
+        hydra:search:
+          type: object
+          properties:
+            '@type':
+              type: string
+            hydra:template:
+              type: string
+            hydra:variableRepresentation:
+              type: string
+            hydra:mapping:
+              type: array
+              items:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                  variable:
+                    type: string
+                  property:
+                    type:
+                    - string
+                    - 'null'
+                  required:
+                    type: boolean
     User-user.write:
       type: object
       required:
@@ -593,36 +544,112 @@ components:
           type:
           - integer
           - 'null'
-    HydraCollectionBaseSchemaNoPagination:
+    ConstraintViolation:
+      type: object
+      description: Unprocessable entity
+      properties:
+        status:
+          default: 422
+          type: integer
+        violations:
+          type: array
+          items:
+            type: object
+            properties:
+              propertyPath:
+                type: string
+                description: The property path of the violation
+              message:
+                type: string
+                description: The message associated with the violation
+              code:
+                type: string
+                description: The code of the violation
+              hint:
+                type: string
+                description: An extra hint to understand the violation
+              payload:
+                type: object
+                additionalProperties: true
+                description: The serialized payload of the violation
+            required:
+            - propertyPath
+            - message
+        detail:
+          readOnly: true
+          type: string
+        type:
+          readOnly: true
+          type: string
+        title:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+        instance:
+          readOnly: true
+          type:
+          - string
+          - 'null'
+    User-user.patch.jsonMergePatch:
       type: object
       properties:
-        hydra:totalItems:
-          type: integer
-          minimum: 0
-        hydra:search:
-          type: object
-          properties:
-            '@type':
-              type: string
-            hydra:template:
-              type: string
-            hydra:variableRepresentation:
-              type: string
-            hydra:mapping:
-              type: array
-              items:
-                type: object
-                properties:
-                  '@type':
-                    type: string
-                  variable:
-                    type: string
-                  property:
-                    type:
-                    - string
-                    - 'null'
-                  required:
-                    type: boolean
+        name:
+          maxLength: 128
+          description: Full name of the user
+          type:
+          - string
+          - 'null'
+        email:
+          format: email
+          maxLength: 128
+          description: Email address of the user
+          externalDocs:
+            url: https://schema.org/email
+          type:
+          - string
+          - 'null'
+        password:
+          description: 'Password (HIGH complexity required: min 10 chars, uppercase, lowercase, number, special character)'
+          type:
+          - string
+          - 'null'
+        userGroupIds:
+          description: IDs of the user groups to assign to this user
+          type: array
+          items:
+            type:
+            - string
+            - 'null'
+        accessGroupId:
+          description: Restrict user access to a merchant access group by ID
+          type:
+          - integer
+          - 'null'
+        merchantId:
+          description: Restrict user access to a single merchant by ID
+          type:
+          - integer
+          - 'null'
+        isActive:
+          description: Whether the user is active
+          type:
+          - boolean
+          - 'null'
+        enforceTwoFactorAuth:
+          description: Whether to enforce two-factor authentication
+          default: false
+          type:
+          - boolean
+          - 'null'
+        language:
+          enum:
+          - en
+          - fr
+          description: User language preference (en or fr)
+          type:
+          - string
+          - 'null'
     Error.jsonld:
       allOf:
       - $ref: '#/components/schemas/HydraItemBaseSchema'
@@ -715,65 +742,38 @@ components:
             - string
             - 'null'
       description: Unprocessable entity
-    User-user.patch.jsonMergePatch:
-      type: object
-      properties:
-        name:
-          maxLength: 128
-          description: Full name of the user
-          type:
-          - string
-          - 'null'
-        email:
-          format: email
-          maxLength: 128
-          description: Email address of the user
-          externalDocs:
-            url: https://schema.org/email
-          type:
-          - string
-          - 'null'
-        password:
-          description: 'Password (HIGH complexity required: min 10 chars, uppercase, lowercase, number, special character)'
-          type:
-          - string
-          - 'null'
-        userGroupIds:
-          description: IDs of the user groups to assign to this user
-          type: array
-          items:
-            type:
-            - string
-            - 'null'
-        accessGroupId:
-          description: Restrict user access to a merchant access group by ID
-          type:
-          - integer
-          - 'null'
-        merchantId:
-          description: Restrict user access to a single merchant by ID
-          type:
-          - integer
-          - 'null'
-        isActive:
-          description: Whether the user is active
-          type:
-          - boolean
-          - 'null'
-        enforceTwoFactorAuth:
-          description: Whether to enforce two-factor authentication
-          default: false
-          type:
-          - boolean
-          - 'null'
-        language:
-          enum:
-          - en
-          - fr
-          description: User language preference (en or fr)
-          type:
-          - string
-          - 'null'
+    HydraCollectionBaseSchema:
+      allOf:
+      - $ref: '#/components/schemas/HydraCollectionBaseSchemaNoPagination'
+      - type: object
+        properties:
+          hydra:view:
+            type: object
+            properties:
+              '@id':
+                type: string
+                format: iri-reference
+              '@type':
+                type: string
+              hydra:first:
+                type: string
+                format: iri-reference
+              hydra:last:
+                type: string
+                format: iri-reference
+              hydra:previous:
+                type: string
+                format: iri-reference
+              hydra:next:
+                type: string
+                format: iri-reference
+            example:
+              '@id': string
+              '@type': string
+              hydra:first: string
+              hydra:last: string
+              hydra:previous: string
+              hydra:next: string
     Error:
       type: object
       description: A representation of common errors.
